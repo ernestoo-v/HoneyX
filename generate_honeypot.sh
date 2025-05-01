@@ -8,7 +8,7 @@ set -e
 dir="honeypot"
 
 # Crear estructura de carpetas
-mkdir -p $dir/{cowrie,dionaea,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,grafana/data,grafana/provisioning,config}
+mkdir -p $dir/{cowrie,dionaea,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,grafana/data,grafana/provisioning/datasources,config}
 echo "Creando directorios necesarios..."
 
 # Asignar permisos adecuados para Grafana
@@ -167,5 +167,121 @@ EOF
 # Servicio web Apache+PHP
 echo "Generando servicio web Apache+PHP..."
 echo "<?php phpinfo(); ?>" > $dir/web/index.php
+
+# Configuración de Loki
+echo "Generando configuración para Loki..."
+cat > $dir/config/loki-config.yaml << 'EOF'
+auth_enabled: false
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9095
+ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+  final_sleep: 0s
+  chunk_idle_period: 5m
+  max_chunk_age: 1h
+  chunk_target_size: 1048576
+  chunk_retain_period: 30s
+  wal:
+    enabled: true
+    dir: /tmp/wal
+schema_config:
+  configs:
+    - from: 2022-01-01
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /tmp/index
+    cache_location: /tmp/index_cache
+    shared_store: filesystem
+  filesystem:
+    directory: /tmp/chunks
+limits_config:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+chunk_store_config:
+  max_look_back_period: 0s
+table_manager:
+  retention_deletes_enabled: false
+  retention_period: 0s
+EOF
+
+# Configuración de Promtail
+echo "Generando configuración para Promtail..."
+cat > $dir/config/promtail-config.yaml << 'EOF'
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://mi_loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: apache_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: apache
+          __path__: /var/log/apache2/*.log
+
+  - job_name: mysql_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: mysql
+          __path__: /var/log/mysql/*.log
+
+  - job_name: ftp_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: ftp
+          __path__: /var/log/*.log
+EOF
+
+# Configuración de Prometheus
+echo "Generando configuración para Prometheus..."
+cat > $dir/config/prometheus.yml << 'EOF'
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['mi_node_exporter:9100']
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+EOF
+
+# Configuración de provisioning para Grafana
+echo "Generando configuración de provisioning para Grafana..."
+cat > $dir/grafana/provisioning/datasources/datasource.yml << 'EOF'
+apiVersion: 1
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://mi_loki:3100
+    jsonData:
+      maxLines: 1000
+EOF
+
+
 
 echo "Estructura y ficheros generados en ./$dir"
