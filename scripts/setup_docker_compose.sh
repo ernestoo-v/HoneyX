@@ -1,21 +1,8 @@
 #!/usr/bin/env bash
-# Script para generar la estructura y ficheros de un honeypot de media interacción
-# con Cowrie (SSH), Dionaea (FTP), un servicio web Apache+PHP y herramientas de observabilidad.
-
 set -e
 
-# Base directory
-dir="honeypot"
+dir=$1
 
-# Crear estructura de carpetas
-mkdir -p $dir/{cowrie,dionaea,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,grafana/data,grafana/provisioning,config}
-echo "Creando directorios necesarios..."
-
-# Asignar permisos adecuados para Grafana
-sudo chown -R 472:472 $dir/grafana/data
-echo "Asignando permisos a grafana/data..."
-
-# Generar docker-compose.yml
 echo "Generando docker-compose.yml..."
 cat > $dir/docker-compose.yml << 'EOF'
 version: "3.8"
@@ -122,50 +109,3 @@ networks:
         - subnet: 172.18.0.0/16
           gateway: 172.18.0.1
 EOF
-
-# Cowrie
-echo "Generando configuración para Cowrie..."
-cat > $dir/cowrie/Dockerfile << 'EOF'
-FROM cowrie/cowrie:latest
-COPY cowrie.cfg /cowrie/etc/cowrie.cfg
-EOF
-
-cat > $dir/cowrie/cowrie.cfg << 'EOF'
-[honeypot]
-hostname = honeypot-ssh
-listen_addr = 0.0.0.0
-listen_port = 22
-log_path = /cowrie/log
-download_path = /cowrie/dl
-
-auth_class = AuthRandom
-auth_class_parameters = 2,5,10
-
-[output_jsonlog]
-enabled = true
-EOF
-
-# Dionaea
-echo "Generando configuración para Dionaea..."
-cat > $dir/dionaea/Dockerfile << 'EOF'
-FROM dinotools/dionaea:latest
-COPY dionaea.conf /etc/dionaea/dionaea.conf
-EOF
-
-cat > $dir/dionaea/dionaea.conf << 'EOF'
-[dionaea]
-sensor_name = honeypot-ftp
-modules = ftp
-log_format = json
-
-[ftp]
-enabled = true
-listen_address = 0.0.0.0
-listen_port = 21
-EOF
-
-# Servicio web Apache+PHP
-echo "Generando servicio web Apache+PHP..."
-echo "<?php phpinfo(); ?>" > $dir/web/index.php
-
-echo "Estructura y ficheros generados en ./$dir"
