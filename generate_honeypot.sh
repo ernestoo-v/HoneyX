@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Script para generar la estructura y ficheros de un honeypot de media interacción
-# con Cowrie (SSH), Dionaea (FTP) y un servicio web Apache+PHP.
+# con Cowrie (SSH), Dionaea (FTP), Apache+PHP y Grafana.
 
 set -e
 
@@ -8,8 +8,12 @@ set -e
 dir="honeypot"
 
 # Crear estructura de carpetas
-mkdir -p $dir/{cowrie,dionaea,web,volumenes/apache_logs}
-echo "Creando directorios: $dir/{cowrie,dionaea,web,volumenes/apache_logs}"
+mkdir -p $dir/{cowrie,dionaea,web,volumenes/apache_logs,grafana/data,grafana/provisioning}
+echo "Creando directorios: $dir/{cowrie,dionaea,web,volumenes/apache_logs,grafana/data,grafana/provisioning}"
+
+# Asignar permisos adecuados a la carpeta de datos de Grafana
+sudo chown -R 472:472 $dir/grafana/data
+echo "Asignados permisos 472:472 a $dir/grafana/data"
 
 echo "Generando docker-compose.yml..."
 cat > $dir/docker-compose.yml << 'EOF'
@@ -50,6 +54,19 @@ services:
     networks:
       dmz:
         ipv4_address: 172.18.0.12
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: honeypot_grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      dmz:
+        ipv4_address: 172.18.0.13
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
 
 networks:
   dmz:
@@ -103,7 +120,7 @@ EOF
 
 # Servicio web Apache+PHP
 echo "Generando servicio web Apache+PHP..."
-# Crear un index.php de muestra
 echo "<?php phpinfo(); ?>" > $dir/web/index.php
 
 echo "Estructura y ficheros generados en ./$dir"
+
