@@ -172,47 +172,50 @@ echo "<?php phpinfo(); ?>" > $dir/web/index.php
 echo "Generando configuración para Loki..."
 cat > $dir/config/loki-config.yaml << 'EOF'
 auth_enabled: false
+
 server:
   http_listen_port: 3100
-  grpc_listen_port: 9095
-ingester:
-  lifecycler:
-    ring:
-      kvstore:
-        store: inmemory
-  final_sleep: 0s
-  chunk_idle_period: 5m
-  max_chunk_age: 1h
-  chunk_target_size: 1048576
-  chunk_retain_period: 30s
-  wal:
-    enabled: true
-    dir: /tmp/wal
+  grpc_listen_port: 9096
+
+query_scheduler:
+  max_outstanding_requests_per_tenant: 4096
+frontend:
+  max_outstanding_per_tenant: 4096
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /tmp/loki
+  storage:
+    filesystem:
+      chunks_directory: /tmp/loki/chunks
+      rules_directory: /tmp/loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+query_range:
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 100
+
 schema_config:
   configs:
-    - from: 2022-01-01
+    - from: 2020-10-24
       store: boltdb-shipper
       object_store: filesystem
       schema: v11
       index:
         prefix: index_
         period: 24h
-storage_config:
-  boltdb_shipper:
-    active_index_directory: /tmp/index
-    cache_location: /tmp/index_cache
-    shared_store: filesystem
-  filesystem:
-    directory: /tmp/chunks
-limits_config:
-  enforce_metric_name: false
-  reject_old_samples: true
-  reject_old_samples_max_age: 168h
-chunk_store_config:
-  max_look_back_period: 0s
-table_manager:
-  retention_deletes_enabled: false
-  retention_period: 0s
+
+ruler:
+  alertmanager_url: http://localhost:9093
+
+analytics:
+  reporting_enabled: false
 EOF
 
 # Configuración de Promtail
@@ -229,7 +232,7 @@ clients:
   - url: http://mi_loki:3100/loki/api/v1/push
 
 scrape_configs:
-  - job_name: apache_logs
+  - job_name: apache
     static_configs:
       - targets:
           - localhost
@@ -237,7 +240,7 @@ scrape_configs:
           job: apache
           __path__: /var/log/apache2/*.log
 
-  - job_name: mysql_logs
+  - job_name: mysql
     static_configs:
       - targets:
           - localhost
@@ -245,13 +248,13 @@ scrape_configs:
           job: mysql
           __path__: /var/log/mysql/*.log
 
-  - job_name: ftp_logs
+  - job_name: ftp
     static_configs:
       - targets:
           - localhost
         labels:
           job: ftp
-          __path__: /var/log/*.log
+          __path__: /var/log/vsftpd.log
 EOF
 
 # Configuración de Prometheus
@@ -261,12 +264,30 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['mi_prometheus:9090']
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mi_mysql:9104']
+  - job_name: 'apache'
+    static_configs:
+      - targets: ['mi_apache:9117']
+  - job_name: 'ftp'
+    static_configs:
+      - targets: ['mi_ftp:9123']
   - job_name: 'node_exporter'
     static_configs:
       - targets: ['mi_node_exporter:9100']
-  - job_name: 'prometheus'
+  - job_name: 'grafana'
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['mi_grafana:3000']
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['mi_loki:3100']
+  - job_name: 'promtail'
+    static_configs:
+      - targets: ['mi_promtail:9080']
 EOF
 
 # Configuración de provisioning para Grafana
@@ -283,5 +304,5 @@ datasources:
 EOF
 
 
-
 echo "Estructura y ficheros generados en ./$dir"
+
