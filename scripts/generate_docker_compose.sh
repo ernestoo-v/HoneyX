@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
+# Genera el docker-compose.yml completo
+
 set -e
 
-dir=$1
-
-echo "Generando docker-compose.yml..."
+dir="honeypot"
 cat > $dir/docker-compose.yml << 'EOF'
 version: "3.8"
 
@@ -16,9 +16,7 @@ services:
       dmz:
         ipv4_address: 172.18.0.10
     volumes:
-      - type: bind
-        source: ./cowrie/cowrie.cfg
-        target: /cowrie/etc/cowrie.cfg
+      - ./cowrie/cowrie.cfg:/cowrie/etc/cowrie.cfg
 
   dionaea:
     build: ./dionaea
@@ -109,3 +107,5 @@ networks:
         - subnet: 172.18.0.0/16
           gateway: 172.18.0.1
 EOF
+
+echo "docker-compose.yml generado en ./$dir"

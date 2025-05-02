@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
+# Genera Dockerfile y configuración de Cowrie
+
 set -e
 
-dir=$1
+dir="honeypot/cowrie"
 
-echo "Generando configuración para Cowrie..."
-cat > $dir/cowrie/Dockerfile << 'EOF'
+cat > $dir/Dockerfile << 'EOF'
 FROM cowrie/cowrie:latest
 COPY cowrie.cfg /cowrie/etc/cowrie.cfg
 EOF
 
-cat > $dir/cowrie/cowrie.cfg << 'EOF'
+cat > $dir/cowrie.cfg << 'EOF'
 [honeypot]
 hostname = honeypot-ssh
 listen_addr = 0.0.0.0
@@ -23,3 +24,5 @@ auth_class_parameters = 2,5,10
 [output_jsonlog]
 enabled = true
 EOF
+
+echo "Cowrie configurado en $dir"
