@@ -27,11 +27,37 @@ services:
         ipv4_address: 172.18.0.11
     tmpfs:
       - /dionaea/data:rw,size=100m
+      
+   mi_mysql:
+    image: mysql:5.7
+    container_name: mi_mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=bbdd
+      - MYSQL_ROOT_PASSWORD=vagrant
+      - MYSQL_USER=usuario
+      - MYSQL_PASSWORD=passwd
+    volumes:
+      - ./volumenes/mysql_data:/var/lib/mysql
+      - ./volumenes/mysql_log:/var/log/mysql
+      - ./config/my.cnf:/etc/my.cnf
+    ports:
+      - "3306:3306"
+    networks:
+      dmz:
+        ipv4_address: 172.18.0.18
 
   mi_apache:
     image: php:7-apache
     container_name: mi_apache
     restart: unless-stopped
+    depends_on:
+      - mi_mysql
+    environment:
+      - DB_HOST=mi_mysql
+      - DB_NAME=bbdd
+      - DB_USER=usuario
+      - DB_PASS=passwd
     volumes:
       - ./web/:/var/www/html:ro
       - ./volumenes/apache_logs:/var/log/apache2

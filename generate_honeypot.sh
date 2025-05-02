@@ -42,11 +42,37 @@ services:
         ipv4_address: 172.18.0.11
     tmpfs:
       - /dionaea/data:rw,size=100m
-
+  
+   mi_mysql:
+    image: mysql:5.7
+    container_name: mi_mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=bbdd
+      - MYSQL_ROOT_PASSWORD=vagrant
+      - MYSQL_USER=usuario
+      - MYSQL_PASSWORD=passwd
+    volumes:
+      - ./volumenes/mysql_data:/var/lib/mysql
+      - ./volumenes/mysql_log:/var/log/mysql
+      - ./config/my.cnf:/etc/my.cnf
+    ports:
+      - "3306:3306"
+    networks:
+      dmz:
+        ipv4_address: 172.18.0.18
+  
   mi_apache:
     image: php:7-apache
     container_name: mi_apache
     restart: unless-stopped
+    depends_on:
+      - mi_mysql
+    environment:
+      - DB_HOST=mi_mysql
+      - DB_NAME=bbdd
+      - DB_USER=usuario
+      - DB_PASS=passwd
     volumes:
       - ./web/:/var/www/html:ro
       - ./volumenes/apache_logs:/var/log/apache2
@@ -166,7 +192,46 @@ EOF
 
 # Servicio web Apache+PHP
 echo "Generando servicio web Apache+PHP..."
-echo "<?php phpinfo(); ?>" > $dir/web/index.php
+# Crear directorio web si no existe
+mkdir -p $dir/web
+
+# index.php: incluye config.php y muestra phpinfo
+cat > $dir/web/index.php << 'EOF'
+<?php
+// Carga la configuración de conexión a MySQL
+require_once __DIR__ . '/config.php';
+
+// Muestra información de PHP
+phpinfo();
+?>
+EOF
+
+# config.php: parámetros de conexión a MySQL desde variables de entorno
+cat > $dir/web/config.php << 'EOF'
+<?php
+// Obtiene credenciales de MySQL de variables de entorno
+\$host = getenv('DB_HOST') ?: 'mi_mysql';
+\$db   = getenv('DB_NAME') ?: 'bbdd';
+\$user = getenv('DB_USER') ?: 'usuario';
+\$pass = getenv('DB_PASS') ?: 'passwd';
+
+// DSN para PDO
+\$dsn = "mysql:host={\$host};dbname={\$db};charset=utf8mb4";
+
+try {
+    \$pdo = new PDO(\$dsn, \$user, \$pass, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+    echo \"Conectado a MySQL: {\$db} en {\$host}\" . PHP_EOL;
+} catch (PDOException \$e) {
+    echo \"Error de conexión a MySQL: \" . \$e->getMessage() . PHP_EOL;
+    exit(1);
+}
+?>
+EOF
+
+echo "Archivos web/index.php y web/config.php generados."
 
 # Configuración de Loki
 echo "Generando configuración para Loki..."
