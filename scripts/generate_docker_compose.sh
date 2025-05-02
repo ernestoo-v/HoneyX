@@ -28,7 +28,7 @@ services:
     tmpfs:
       - /dionaea/data:rw,size=100m
       
-   mi_mysql:
+  mi_mysql:
     image: mysql:5.7
     container_name: mi_mysql
     restart: unless-stopped
