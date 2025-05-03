@@ -204,8 +204,8 @@ xferlog_std_format=YES
 ftpd_banner=Welcome to FTP.
 listen_port=21
 pasv_enable=YES
-pasv_min_port=21100
-pasv_max_port=21110
+pasv_min_port=21
+pasv_max_port=21
 pasv_address=0.0.0.0
 EOF
 
