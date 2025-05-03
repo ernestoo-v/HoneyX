@@ -40,8 +40,8 @@ services:
       - FTP_USER=ftpuser
       - FTP_PASS=ftppass
       - PASV_ADDRESS=0.0.0.0
-      - PASV_MIN_PORT=21100
-      - PASV_MAX_PORT=21110
+      - PASV_MIN_PORT=21
+      - PASV_MAX_PORT=21
       - FILE_OPEN_MODE=0666
       - LOCAL_UMASK=022
       - LOG_STDOUT=YES
