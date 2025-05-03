@@ -40,8 +40,12 @@ services:
       - FTP_USER=ftpuser
       - FTP_PASS=ftppass
       - PASV_ADDRESS=0.0.0.0
+      - PASV_MIN_PORT=21100
+      - PASV_MAX_PORT=21110
+      - FILE_OPEN_MODE=0666
+      - LOCAL_UMASK=022
+      - LOG_STDOUT=YES
     volumes:
-      - ./mi_ftp/vsftpd.conf:/etc/vsftpd/vsftpd.conf
       - ./volumenes/ftp_logs:/var/log/vsftpd
     ports:
       - "21:21"
