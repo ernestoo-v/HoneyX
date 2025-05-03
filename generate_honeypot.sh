@@ -41,7 +41,7 @@ services:
       - FTP_PASS=ftppass
       - PASV_ADDRESS=0.0.0.0
     volumes:
-      - ./volumenes/ftp_logs:/var/log/
+      - ./volumenes/ftp_logs:/var/log/vsftpd
     ports:
       - "21:21"
     networks:
@@ -184,6 +184,7 @@ echo "Generando configuración para mi_ftp..."
 cat > $dir/mi_ftp/Dockerfile << 'EOF'
 FROM fauria/vsftpd:latest
 COPY vsftpd.conf /etc/vsftpd/vsftpd.conf
+CMD ["/usr/sbin/run-vsftpd.sh"]
 EOF
 
 cat > $dir/mi_ftp/vsftpd.conf << 'EOF'
