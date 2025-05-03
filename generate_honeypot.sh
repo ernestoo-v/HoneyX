@@ -46,6 +46,7 @@ services:
       - LOCAL_UMASK=022
       - LOG_STDOUT=YES
     volumes:
+      - ./mi_ftp/vsftpd.conf:/etc/vsftpd.conf
       - ./volumenes/ftp_logs:/var/log/vsftpd
     ports:
       - "21:21"
@@ -126,7 +127,7 @@ services:
     volumes:
       - ./volumenes/apache_logs:/var/log/apache2
       - ./volumenes/mysql_log:/var/log/mysql
-      - ./volumenes/ftp_logs:/var/log/
+      - ./volumenes/ftp_logs:/var/log/vsftpd
       - ./config/promtail-config.yaml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml
     networks:
