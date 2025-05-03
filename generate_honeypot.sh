@@ -42,7 +42,6 @@ services:
       - PASV_ADDRESS=0.0.0.0
       - PASV_MIN_PORT=21100
       - PASV_MAX_PORT=21110
-      - LOG_STDOUT=YES
     volumes:
       - ./mi_ftp/vsftpd.conf:/etc/vsftpd.conf
       - ./volumenes/ftp_logs:/var/log/vsftpd
