@@ -34,13 +34,14 @@ services:
         target: /cowrie/etc/cowrie.cfg
 
   mi_ftp:
-    build: ./mi_ftp
+    image: fauria/vsftpd
     container_name: mi_ftp
     environment:
       - FTP_USER=ftpuser
       - FTP_PASS=ftppass
       - PASV_ADDRESS=0.0.0.0
     volumes:
+      - ./mi_ftp/vsftpd.conf:/etc/vsftpd/vsftpd.conf
       - ./volumenes/ftp_logs:/var/log/vsftpd
     ports:
       - "21:21"
@@ -181,14 +182,10 @@ EOF
 
 # mi_ftp
 echo "Generando configuración para mi_ftp..."
-cat > $dir/mi_ftp/Dockerfile << 'EOF'
-FROM fauria/vsftpd:latest
-COPY vsftpd.conf /etc/vsftpd/vsftpd.conf
-CMD ["/usr/sbin/run-vsftpd.sh"]
-EOF
+
+mkdir -p $dir/mi_ftp
 
 cat > $dir/mi_ftp/vsftpd.conf << 'EOF'
-[mi_ftp]
 listen=YES
 anonymous_enable=YES
 local_enable=YES
