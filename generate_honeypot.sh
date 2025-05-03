@@ -40,16 +40,15 @@ services:
       - FTP_USER=ftpuser
       - FTP_PASS=ftppass
       - PASV_ADDRESS=0.0.0.0
-      - PASV_MIN_PORT=21
-      - PASV_MAX_PORT=21
-      - FILE_OPEN_MODE=0666
-      - LOCAL_UMASK=022
+      - PASV_MIN_PORT=21100
+      - PASV_MAX_PORT=21110
       - LOG_STDOUT=YES
     volumes:
       - ./mi_ftp/vsftpd.conf:/etc/vsftpd.conf
       - ./volumenes/ftp_logs:/var/log/vsftpd
     ports:
       - "21:21"
+      - "21100-21110:21100-21110"
     networks:
       dmz:
         ipv4_address: 172.18.0.11
@@ -194,18 +193,16 @@ cat > $dir/mi_ftp/vsftpd.conf << 'EOF'
 listen=YES
 anonymous_enable=YES
 local_enable=YES
-write_enable=NO
+write_enable=YES
 dirmessage_enable=YES
 xferlog_enable=YES
 xferlog_file=/var/log/vsftpd.log
 log_ftp_protocol=YES
-connect_from_port_20=YES
-xferlog_std_format=YES
-ftpd_banner=Welcome to FTP.
+ftpd_banner=Welcome to FTP
 listen_port=21
 pasv_enable=YES
-pasv_min_port=21
-pasv_max_port=21
+pasv_min_port=21100
+pasv_max_port=21110
 pasv_address=0.0.0.0
 EOF
 
@@ -401,7 +398,7 @@ scrape_configs:
           - localhost
         labels:
           job: ftp
-          __path__: /var/log/vsftpd/*.log
+          __path__: /var/log/vsftpd/vsftpd.log
 EOF
 
 # Configuración de Prometheus
