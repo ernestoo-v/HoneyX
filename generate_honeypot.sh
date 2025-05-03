@@ -401,7 +401,7 @@ scrape_configs:
           - localhost
         labels:
           job: ftp
-          __path__: /var/log/vsftpd.log
+          __path__: /var/log/vsftpd/*.log
 EOF
 
 # Configuración de Prometheus
