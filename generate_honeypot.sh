@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Script para generar la estructura y ficheros de un honeypot de media interacción
-# con Cowrie (SSH), Dionaea (FTP), un servicio web Apache+PHP y herramientas de observabilidad.
+# con Cowrie (SSH), Vsftpd (FTP), un servicio web Apache+PHP y herramientas de observabilidad.
 
 set -e
 
@@ -8,7 +8,7 @@ set -e
 dir="honeypot"
 
 # Crear estructura de carpetas
-mkdir -p $dir/{cowrie,dionaea,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,grafana/data,grafana/provisioning/datasources,config}
+mkdir -p $dir/{cowrie,mi_ftp,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,grafana/data,grafana/provisioning/datasources,config}
 echo "Creando directorios necesarios..."
 
 # Asignar permisos adecuados para Grafana
@@ -33,15 +33,20 @@ services:
         source: ./cowrie/cowrie.cfg
         target: /cowrie/etc/cowrie.cfg
 
-  dionaea:
-    build: ./dionaea
-    container_name: honeypot_dionaea
-    restart: unless-stopped
+  mi_ftp:
+    build: ./mi_ftp
+    container_name: mi_ftp
+    environment:
+      - FTP_USER=ftpuser
+      - FTP_PASS=ftppass
+      - PASV_ADDRESS=0.0.0.0
+    volumes:
+      - ./volumenes/ftp_logs:/var/log/
+    ports:
+      - "21:21"
     networks:
       dmz:
         ipv4_address: 172.18.0.11
-    tmpfs:
-      - /dionaea/data:rw,size=100m
   
   mi_mysql:
     image: mysql:5.7
@@ -174,23 +179,29 @@ auth_class_parameters = 2,5,10
 enabled = true
 EOF
 
-# Dionaea
-echo "Generando configuración para Dionaea..."
-cat > $dir/dionaea/Dockerfile << 'EOF'
-FROM dinotools/dionaea:latest
-COPY dionaea.conf /etc/dionaea/dionaea.conf
+# mi_ftp
+echo "Generando configuración para mi_ftp..."
+cat > $dir/mi_ftp/Dockerfile << 'EOF'
+FROM fauria/vsftpd:latest
+COPY vsftpd.conf /etc/vsftpd/vsftpd.conf
 EOF
 
-cat > $dir/dionaea/dionaea.conf << 'EOF'
-[dionaea]
-sensor_name = honeypot-ftp
-modules = ftp
-log_format = json
-
-[ftp]
-enabled = true
-listen_address = 0.0.0.0
-listen_port = 21
+cat > $dir/mi_ftp/vsftpd.conf << 'EOF'
+[mi_ftp]
+listen=YES
+anonymous_enable=YES
+local_enable=YES
+write_enable=NO
+dirmessage_enable=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+xferlog_std_format=YES
+ftpd_banner=Welcome to FTP.
+listen_port=21
+pasv_enable=YES
+pasv_min_port=21100
+pasv_max_port=21110
+pasv_address=0.0.0.0
 EOF
 
 # Servicio web Apache+PHP
