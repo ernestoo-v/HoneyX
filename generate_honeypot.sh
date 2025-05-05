@@ -34,10 +34,9 @@ services:
         target: /cowrie/etc/cowrie.cfg
 
   mi_ftp:
-    image: serversideup/proftpd
+    build: ./proftpd
     container_name: mi_ftp
     environment:
-      - PROFTPD_USERS=ftpuser:ftppass
       - PASV_ADDRESS=0.0.0.0
       - PASV_MIN_PORT=21100
       - PASV_MAX_PORT=21110
@@ -186,6 +185,18 @@ EOF
 echo "Generando configuración para mi_ftp..."
 
 mkdir -p $dir/proftpd
+
+cat > $dir/proftpd/Dockerfile << 'EOF'
+FROM debian:bullseye-slim
+RUN apt-get update && apt-get install -y proftpd-basic && rm -rf /var/lib/apt/lists/*
+COPY proftpd.conf /etc/proftpd/proftpd.conf
+RUN mkdir -p /var/log/proftpd /home/ftpuser && \
+    useradd -m ftpuser -s /bin/bash && \
+    echo "ftpuser:ftppass" | chpasswd && \
+    chown -R ftpuser:ftpuser /home/ftpuser /var/log/proftpd
+EXPOSE 21 21100-21110
+CMD ["proftpd", "--nodaemon"]
+EOF
 
 cat > $dir/proftpd/proftpd.conf << 'EOF'
 ServerName "ProFTPD Honeypot"
