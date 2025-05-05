@@ -42,6 +42,8 @@ services:
       - PASV_ADDRESS=0.0.0.0
       - PASV_MIN_PORT=21100
       - PASV_MAX_PORT=21110
+      - PROFTPD_USER=ftpuser
+      - PROFTPD_PASSWORD=ftppass
     volumes:
       - ./proftpd/proftpd.conf:/etc/proftpd/proftpd.conf
       - ./volumenes/ftp_logs:/var/log/proftpd
@@ -199,11 +201,6 @@ PassivePorts 21100 21110
 
 ExtendedLog /var/log/proftpd/access.log AUTH,READ,WRITE
 TransferLog /var/log/proftpd/transfer.log
-
-User ftpuser
-Group ftpuser
-AuthUserFile /etc/passwd
-AuthGroupFile /etc/group
 
 DefaultRoot ~
 
