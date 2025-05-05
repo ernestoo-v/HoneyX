@@ -190,8 +190,8 @@ cat > $dir/proftpd/Dockerfile << 'EOF'
 FROM debian:bullseye-slim
 RUN apt-get update && apt-get install -y proftpd-basic && rm -rf /var/lib/apt/lists/*
 COPY proftpd.conf /etc/proftpd/proftpd.conf
-RUN mkdir -p /var/log/proftpd /home/ftpuser && \
-    useradd -m ftpuser -s /bin/bash && \
+RUN mkdir -p /var/log/proftpd && \
+    useradd -m -d /home/ftpuser -s /bin/bash ftpuser && \
     echo "ftpuser:ftppass" | chpasswd && \
     chown -R ftpuser:ftpuser /home/ftpuser /var/log/proftpd
 EXPOSE 21 21100-21110
