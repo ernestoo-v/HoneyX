@@ -34,7 +34,7 @@ services:
         target: /cowrie/etc/cowrie.cfg
 
   mi_ftp:
-    image: proftpd/proftpd
+    image: jmoraleda/proftpd
     container_name: mi_ftp
     environment:
       - FTP_USER=ftpuser
