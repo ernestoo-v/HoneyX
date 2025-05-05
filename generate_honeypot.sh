@@ -207,6 +207,7 @@ Port 21
 
 PassivePorts 21100 21110
 
+SystemLog /var/log/proftpd/proftpd.log
 ExtendedLog /var/log/proftpd/access.log AUTH,READ,WRITE
 TransferLog /var/log/proftpd/transfer.log
 
