@@ -34,7 +34,7 @@ services:
         target: /cowrie/etc/cowrie.cfg
 
   mi_ftp:
-    image: fauria/vsftpd
+    image: proftpd/proftpd
     container_name: mi_ftp
     environment:
       - FTP_USER=ftpuser
@@ -43,8 +43,8 @@ services:
       - PASV_MIN_PORT=21100
       - PASV_MAX_PORT=21110
     volumes:
-      - ./mi_ftp/vsftpd.conf:/etc/vsftpd.conf
-      - ./volumenes/ftp_logs:/var/log/vsftpd
+      - ./proftpd/proftpd.conf:/etc/proftpd/proftpd.conf
+      - ./volumenes/ftp_logs:/var/log/proftpd
     ports:
       - "21:21"
       - "21100-21110:21100-21110"
@@ -186,23 +186,31 @@ EOF
 # mi_ftp
 echo "Generando configuración para mi_ftp..."
 
-mkdir -p $dir/mi_ftp
+mkdir -p $dir/proftpd
 
-cat > $dir/mi_ftp/vsftpd.conf << 'EOF'
-listen=YES
-anonymous_enable=YES
-local_enable=YES
-write_enable=YES
-dirmessage_enable=YES
-xferlog_enable=YES
-xferlog_file=/var/log/vsftpd.log
-log_ftp_protocol=YES
-ftpd_banner=Welcome to FTP
-listen_port=21
-pasv_enable=YES
-pasv_min_port=21100
-pasv_max_port=21110
-pasv_address=0.0.0.0
+cat > $dir/proftpd/proftpd.conf << 'EOF'
+ServerName "ProFTPD Honeypot"
+ServerType standalone
+DefaultServer on
+
+Port 21
+
+PassivePorts 21100 21110
+
+ExtendedLog /var/log/proftpd/access.log AUTH,READ,WRITE
+TransferLog /var/log/proftpd/transfer.log
+
+User ftpuser
+Group ftpuser
+AuthUserFile /etc/passwd
+AuthGroupFile /etc/group
+
+DefaultRoot ~
+
+TimesGMT off
+SetEnv TZ :/etc/localtime
+
+ServerIdent on "FTP Honeypot Listo"
 EOF
 
 # Servicio web Apache+PHP
