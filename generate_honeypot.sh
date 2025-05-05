@@ -127,7 +127,7 @@ services:
     volumes:
       - ./volumenes/apache_logs:/var/log/apache2
       - ./volumenes/mysql_log:/var/log/mysql
-      - ./volumenes/ftp_logs:/var/log/vsftpd
+      - ./volumenes/ftp_logs:/var/log/proftpd
       - ./config/promtail-config.yaml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml
     networks:
@@ -402,7 +402,7 @@ scrape_configs:
           - localhost
         labels:
           job: ftp
-          __path__: /var/log/vsftpd/vsftpd.log
+          __path__: /var/log/proftpd/*.log
 EOF
 
 # Configuración de Prometheus
