@@ -37,13 +37,10 @@ services:
     image: serversideup/proftpd
     container_name: mi_ftp
     environment:
-      - FTP_USER=ftpuser
-      - FTP_PASS=ftppass
+      - PROFTPD_USERS=ftpuser:ftppass
       - PASV_ADDRESS=0.0.0.0
       - PASV_MIN_PORT=21100
       - PASV_MAX_PORT=21110
-      - PROFTPD_USER=ftpuser
-      - PROFTPD_PASSWORD=ftppass
     volumes:
       - ./proftpd/proftpd.conf:/etc/proftpd/proftpd.conf
       - ./volumenes/ftp_logs:/var/log/proftpd
