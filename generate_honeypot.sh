@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Script para generar la estructura y ficheros de un honeypot de media interacción
-# con Cowrie (SSH), Vsftpd (FTP), un servicio web Apache+PHP y herramientas de observabilidad.
+# con Cowrie (SSH), Proftpd (FTP), un servicio web Apache+PHP y herramientas de observabilidad.
 
 set -e
 
