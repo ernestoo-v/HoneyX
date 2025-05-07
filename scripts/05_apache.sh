@@ -1,34 +1,25 @@
-# scripts/generate_web.sh
 #!/usr/bin/env bash
 # Script maestro para generar automáticamente todas las páginas web desde la carpeta "web"
 set -euo pipefail
 
 SCRIPTS_DIR="web"
+APACHE_SETUP_SCRIPT="$SCRIPTS_DIR/create_apache.sh"
 
-echo "==> Iniciando generación de páginas web..."
-# scripts/web/create_apache.sh
-#!/usr/bin/env bash
-set -euo pipefail
-AP_DIR="honeypot/apache"
-WEB_DIR="honeypot/web"
+echo "==> Iniciando generación de entorno web..."
 
-echo "==> Dockerfile de Apache+PHP..."
-mkdir -p "$AP_DIR"
-cat > "$AP_DIR/Dockerfile" << 'EOF'
-FROM php:7-apache
+# Ejecutar primero el script de creación de Apache y estructura web
+if [[ -f "$APACHE_SETUP_SCRIPT" ]]; then
+  echo "Ejecutando $(basename "$APACHE_SETUP_SCRIPT")..."
+  bash "$APACHE_SETUP_SCRIPT"
+else
+  echo "Error: No se encontró $APACHE_SETUP_SCRIPT"
+  exit 1
+fi
 
-# Instala PDO y PDO_MySQL
-RUN apt-get update \
- && docker-php-ext-install pdo pdo_mysql \
- && rm -rf /var/lib/apt/lists/*
-EOF
-
-echo "==> Creando web estática y PHP..."
-mkdir -p "$WEB_DIR"/{assets/css,assets/js}
-
+# Ejecutar el resto de scripts de creación de páginas, excluyendo el de Apache
 for script in "$SCRIPTS_DIR"/create_*.sh; do
-  if [[ -f "$script" ]]; then
-    echo "Ejecutando \$(basename "$script")..."
+  if [[ "$script" != "$APACHE_SETUP_SCRIPT" ]]; then
+    echo "Ejecutando $(basename "$script")..."
     bash "$script"
   fi
 done
