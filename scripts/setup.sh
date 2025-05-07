@@ -1,7 +1,8 @@
 ./setup_directories.sh
 ./generate_docker_compose.sh
 ./configure_cowrie.sh
-./configure_dionaea.sh
+#./configure_dionaea.sh
+./configure_mi_ftp.sh
 ./configure_apache.sh
 ./configure_loki.sh
 ./configure_promtail.sh

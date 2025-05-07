@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Script para generar la estructura y ficheros de un honeypot de media interacción
-# con Cowrie (SSH), Dionaea (FTP), un servicio web Apache+PHP y herramientas de observabilidad.
+# con Cowrie (SSH), Proftpd (FTP), un servicio web Apache+PHP y herramientas de observabilidad.
 
 set -e
 
@@ -8,7 +8,7 @@ set -e
 dir="honeypot"
 
 # Crear estructura de carpetas
-mkdir -p $dir/{cowrie,dionaea,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,grafana/data,grafana/provisioning/datasources,config}
+mkdir -p $dir/{cowrie,mi_ftp,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,grafana/data,grafana/provisioning/datasources,config}
 echo "Creando directorios necesarios..."
 
 # Asignar permisos adecuados para Grafana
@@ -33,15 +33,22 @@ services:
         source: ./cowrie/cowrie.cfg
         target: /cowrie/etc/cowrie.cfg
 
-  dionaea:
-    build: ./dionaea
-    container_name: honeypot_dionaea
-    restart: unless-stopped
+  mi_ftp:
+    build: ./proftpd
+    container_name: mi_ftp
+    environment:
+      - PASV_ADDRESS=0.0.0.0
+      - PASV_MIN_PORT=21100
+      - PASV_MAX_PORT=21110
+    volumes:
+      - ./proftpd/proftpd.conf:/etc/proftpd/proftpd.conf
+      - ./volumenes/ftp_logs:/var/log/proftpd
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
     networks:
       dmz:
         ipv4_address: 172.18.0.11
-    tmpfs:
-      - /dionaea/data:rw,size=100m
   
   mi_mysql:
     image: mysql:5.7
@@ -116,7 +123,7 @@ services:
     volumes:
       - ./volumenes/apache_logs:/var/log/apache2
       - ./volumenes/mysql_log:/var/log/mysql
-      - ./volumenes/ftp_logs:/var/log/
+      - ./volumenes/ftp_logs:/var/log/proftpd
       - ./config/promtail-config.yaml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml
     networks:
@@ -174,23 +181,44 @@ auth_class_parameters = 2,5,10
 enabled = true
 EOF
 
-# Dionaea
-echo "Generando configuración para Dionaea..."
-cat > $dir/dionaea/Dockerfile << 'EOF'
-FROM dinotools/dionaea:latest
-COPY dionaea.conf /etc/dionaea/dionaea.conf
+# mi_ftp
+echo "Generando configuración para mi_ftp..."
+
+mkdir -p $dir/proftpd
+
+cat > $dir/proftpd/Dockerfile << 'EOF'
+FROM debian:bullseye-slim
+RUN apt-get update && apt-get install -y proftpd-basic && rm -rf /var/lib/apt/lists/*
+COPY proftpd.conf /etc/proftpd/proftpd.conf
+RUN mkdir -p /var/log/proftpd && \
+    useradd -m -d /home/ftpuser -s /bin/bash ftpuser && \
+    echo "ftpuser:ftppass" | chpasswd && \
+    chown -R ftpuser:ftpuser /home/ftpuser /var/log/proftpd
+EXPOSE 21 21100-21110
+CMD ["proftpd", "--nodaemon"]
 EOF
 
-cat > $dir/dionaea/dionaea.conf << 'EOF'
-[dionaea]
-sensor_name = honeypot-ftp
-modules = ftp
-log_format = json
+cat > $dir/proftpd/proftpd.conf << 'EOF'
+ServerName "ProFTPD Honeypot"
+ServerType standalone
+DefaultServer on
 
-[ftp]
-enabled = true
-listen_address = 0.0.0.0
-listen_port = 21
+Port 21
+
+PassivePorts 21100 21110
+
+SystemLog /var/log/proftpd/proftpd.log
+ExtendedLog /var/log/proftpd/access.log AUTH,READ,WRITE
+TransferLog /var/log/proftpd/transfer.log
+LogFormat commandLog "%h %l %u %t \"%r\" %s"
+ExtendedLog /var/log/proftpd/commands.log ALL commandLog
+
+DefaultRoot ~
+
+TimesGMT off
+SetEnv TZ :/etc/localtime
+
+ServerIdent on "FTP Honeypot Listo"
 EOF
 
 # Servicio web Apache+PHP
@@ -385,7 +413,7 @@ scrape_configs:
           - localhost
         labels:
           job: ftp
-          __path__: /var/log/vsftpd.log
+          __path__: /var/log/proftpd/*.log
 EOF
 
 # Configuración de Prometheus
