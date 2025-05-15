@@ -1,3 +1,19 @@
+
+
+/* Variables de color y espaciado */
+:root {
+  --primary: #2c3e50;
+  --accent: #e74c3c;
+  --form-accent: #868686;
+  --bg: #f7f9fa;
+  --card-bg: #fff;
+  --text-dark: #333;
+  --text-light: #666;
+  --radius: 12px;
+  --shadow: rgba(0,0,0,0.08);
+  --gap: 1rem;
+}
+
 /* ==== Global Header and Footer Styling ==== */
 body {
     font-family: Arial, sans-serif;
