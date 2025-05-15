@@ -4,7 +4,7 @@ set -euo pipefail
 
 WEB_DIR="honeypot/web"
 echo "==> Generando reservas.php..."
-cat > "$WEB_DIR/reservas.php" << 'EOF'
+cat > "$WEB_DIR/reservations.php" << 'EOF'
 <?php
 require_once __DIR__ . '/config.php';
 ?>

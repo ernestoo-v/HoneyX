@@ -13,22 +13,22 @@ mkdir -p "$SQL_INIT_DIR"                   # no da error si ya existe :contentRe
 INIT_SQL="$SQL_INIT_DIR/create_tables.sql"
 echo "==> Generando $INIT_SQL..."
 cat > "$INIT_SQL" << 'EOF'
--- Script de inicialización de tablas para honeypot
+-- init.sql: Creación de tablas y datos para honeypot
+
 CREATE TABLE IF NOT EXISTS reservas (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(100),
-  fecha DATE,
-  hora TIME,
-  personas INT
-);
+  id       INT         AUTO_INCREMENT PRIMARY KEY,
+  nombre   VARCHAR(100) NOT NULL,
+  fecha    DATE        NOT NULL,
+  hora     TIME        NOT NULL,
+  personas INT         NOT NULL
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS platos (
-  id           INTEGER PRIMARY KEY AUTOINCREMENT,
-  nombre       TEXT    NOT NULL,
-  ingredientes TEXT    NOT NULL
-);
+  id           INT           AUTO_INCREMENT PRIMARY KEY,
+  nombre       VARCHAR(255)  NOT NULL,
+  ingredientes TEXT          NOT NULL
+) ENGINE=InnoDB;
 
--- 2) Insertar 20 platos con sus ingredientes
 INSERT INTO platos (nombre, ingredientes) VALUES
   ('Pizza Napoletana',     'Harina, agua, levadura, sal, tomate, mozzarella, albahaca'),
   ('Rendang',              'Carne de res, leche de coco, chalotas, ajo, jengibre, galanga, chiles, cilantro, cúrcuma'),
@@ -50,6 +50,7 @@ INSERT INTO platos (nombre, ingredientes) VALUES
   ('Feijoada',             'Frijoles negros, carne de cerdo, arroz, naranja, col'),
   ('Pad Thai',             'Fideos de arroz, tofu, huevo, brotes de soja, cacahuetes, tamarindo'),
   ('Moussaka',             'Berenjena, carne de cordero, tomate, bechamel, queso');
+
 
 EOF
 echo "==> Fichero $INIT_SQL generado."
