@@ -13,6 +13,7 @@ SCRIPTS=(
   "04_ftp.sh"
   "05_apache.sh"
   "06_mysql.sh"
+  "061_sql_init.sh"
   "07_loki_promtail.sh"
   "08_prometheus_grafana.sh"
 )
