@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Genera prometheus.yml
+# 08_prometheus_grafana.sh — Prometheus y Grafana
 
 set -e
+CONF="honeypot/config"
+GF_PROV="honeypot/grafana/provisioning/datasources"
 
-dir="honeypot/config"
-
-cat > $dir/prometheus.yml << 'EOF'
+echo "==> Generando prometheus.yml..."
+cat > $CONF/prometheus.yml << 'EOF'
 global:
   scrape_interval: 15s
 
@@ -36,4 +37,17 @@ scrape_configs:
       - targets: ['mi_promtail:9080']
 EOF
 
-echo "prometheus.yml generado en $dir"
+echo "==> Grafana provisioning..."
+mkdir -p $GF_PROV
+cat > $GF_PROV/datasource.yml << 'EOF'
+apiVersion: 1
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://mi_loki:3100
+    jsonData:
+      maxLines: 1000
+EOF
+
+echo "Prometheus y Grafana listos."
