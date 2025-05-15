@@ -12,14 +12,16 @@ require_once __DIR__ . '/config.php';
 <head>
   <meta charset="UTF-8">
   <title>Restaurante Ejemplo - Inicio</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/index_style.css">
 </head>
 <body>
   <header>
     <h1>Bienvenidos</h1>
     <nav>
-      <a href="index.php">Inicio</a>
+      <a href="index.php" class="active">Inicio</a>
       <a href="menu.php">Menú</a>
+      <a href="reservations.php">Reservas</a>
       <a href="contact.php">Contacto</a>
     </nav>
   </header>
@@ -31,7 +33,7 @@ require_once __DIR__ . '/config.php';
     ?>
   </main>
   <footer>&copy;<?= date('Y') ?></footer>
-  <script src="assets/js/script.js"></script>
 </body>
 </html>
+
 EOF
