@@ -10,19 +10,6 @@ cat > $OUT << 'EOF'
 version: "3.8"
 
 services:
-  cowrie:
-    build: ./cowrie
-    container_name: honeypot_cowrie
-    restart: unless-stopped
-    networks:
-      dmz:
-        ipv4_address: 172.18.0.10
-    volumes:
-      - type: bind
-        source: ./cowrie/cowrie.cfg
-        target: /cowrie/etc/cowrie.cfg
-      - ./volumenes/cowrie_logs:/cowrie/log
-
   mi_ftp:
     build: ./proftpd
     container_name: mi_ftp
