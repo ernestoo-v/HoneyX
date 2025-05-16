@@ -10,8 +10,7 @@ FROM cowrie/cowrie:latest
 COPY cowrie.cfg /cowrie/etc/cowrie.cfg
 EOF
 
-echo "==> Generando cowrie.cfg..."
-cat > $DIR/cowrie.cfg << 'EOF'
+cat > $dir/cowrie/cowrie.cfg << 'EOF'
 [honeypot]
 hostname = honeypot-ssh
 listen_addr = 0.0.0.0

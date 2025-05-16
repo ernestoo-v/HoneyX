@@ -21,6 +21,7 @@ services:
       - type: bind
         source: ./cowrie/cowrie.cfg
         target: /cowrie/etc/cowrie.cfg
+      - ./volumenes/cowrie_logs:/cowrie/log
 
   mi_ftp:
     build: ./proftpd
@@ -38,7 +39,7 @@ services:
     networks:
       dmz:
         ipv4_address: 172.18.0.11
-
+  
   mi_mysql:
     image: mysql:5.7
     container_name: mi_mysql
@@ -52,13 +53,12 @@ services:
       - ./volumenes/mysql_data:/var/lib/mysql
       - ./volumenes/mysql_log:/var/log/mysql
       - ./config/my.cnf:/etc/my.cnf
-      - ./sql-init:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
     networks:
       dmz:
         ipv4_address: 172.18.0.18
-
+  
   mi_apache:
     build:
       context: ./apache
@@ -82,31 +82,6 @@ services:
       dmz:
         ipv4_address: 172.18.0.12
 
-  grafana:
-    image: grafana/grafana-oss:latest
-    container_name: honeypot_grafana
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    networks:
-      dmz:
-        ipv4_address: 172.18.0.13
-    volumes:
-      - ./grafana/data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
-
-  mi_loki:
-    image: grafana/loki:2.9.0
-    container_name: mi_loki
-    command: -config.file=/etc/loki/local-config.yaml
-    volumes:
-      - ./config/loki-config.yaml:/etc/loki/local-config.yaml
-    ports:
-      - "3100:3100"
-    networks:
-      dmz:
-        ipv4_address: 172.18.0.14
-
   mi_promtail:
     image: grafana/promtail:2.9.0
     container_name: mi_promtail
@@ -114,31 +89,12 @@ services:
       - ./volumenes/apache_logs:/var/log/apache2
       - ./volumenes/mysql_log:/var/log/mysql
       - ./volumenes/ftp_logs:/var/log/proftpd
+      - ./volumenes/cowrie_logs:/cowrie/log
       - ./config/promtail-config.yaml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml
     networks:
       dmz:
         ipv4_address: 172.18.0.15
-
-  mi_prometheus:
-    image: prom/prometheus:latest
-    container_name: mi_prometheus
-    volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    networks:
-      dmz:
-        ipv4_address: 172.18.0.16
-
-  mi_node_exporter:
-    image: prom/node-exporter:latest
-    container_name: mi_node_exporter
-    ports:
-      - "9100:9100"
-    networks:
-      dmz:
-        ipv4_address: 172.18.0.17
 
 networks:
   dmz:
