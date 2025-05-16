@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-SCRIPTS_DIR="scripts"
+SCRIPTS_DIR="scripts_honeypot"
 # El primer script requiere sudo, el resto no
 SCRIPTS=(
   "01_setup.sh"
@@ -14,8 +14,7 @@ SCRIPTS=(
   "05_apache.sh"
   "06_mysql.sh"
   "061_sql_init.sh"
-  "07_loki_promtail.sh"
-  "08_prometheus_grafana.sh"
+  "07_promtail.sh"
 )
 
 echo "==> Iniciando ejecución de todos los scripts..."
