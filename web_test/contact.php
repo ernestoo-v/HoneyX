@@ -1,9 +1,3 @@
-# scripts/05_apache/create_contact.sh
-#!/usr/bin/env bash
-set -euo pipefail
-WEB_DIR="honeypot/web"
-echo "==> Generando contact.php..."
-cat > "$WEB_DIR/contact.php" << 'EOF'
 <?php
 require_once __DIR__ . '/config.php';
 ?>
@@ -39,5 +33,3 @@ require_once __DIR__ . '/config.php';
   <script src="assets/js/script.js"></script>
 </body>
 </html>
-
-EOF

@@ -1,9 +1,3 @@
-# scripts/05_apache/create_index.sh
-#!/usr/bin/env bash
-set -euo pipefail
-WEB_DIR="honeypot/web"
-echo "==> Generando index.php..."
-cat > "$WEB_DIR/index.php" << 'EOF'
 <?php
 require_once __DIR__ . '/config.php';
 ?>
@@ -35,5 +29,3 @@ require_once __DIR__ . '/config.php';
   <footer>&copy;<?= date('Y') ?></footer>
 </body>
 </html>
-
-EOF

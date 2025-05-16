@@ -1,9 +1,3 @@
-# scripts/05_apache/create_menu.sh
-#!/usr/bin/env bash
-set -euo pipefail
-WEB_DIR="honeypot/web"
-echo "==> Generando menu.php..."
-cat > "$WEB_DIR/menu.php" << 'EOF'
 <?php
 require_once __DIR__ . '/config.php';
 $stmt = $pdo->query("SELECT id, nombre, ingredientes FROM platos");
@@ -54,5 +48,3 @@ $platos = $stmt->fetchAll();
   <footer>&copy;<?= date('Y') ?></footer>
 </body>
 </html>
-
-EOF
