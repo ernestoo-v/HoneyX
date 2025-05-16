@@ -5,11 +5,11 @@ set -e
 BASE_DIR="honeypot"
 
 # Crear estructura de carpetas
-mkdir -p $dir/{grafana/data,grafana/provisioning/datasources,config}
+mkdir -p $BASE_DIR/{grafana/data,grafana/provisioning/datasources,config}
 echo "Creando directorios necesarios..."
 
 # Asignar permisos adecuados para Grafana
-sudo chown -R 472:472 $dir/grafana/data
+sudo chown -R 472:472 $BASE_DIR/grafana/data
 echo "Asignando permisos a grafana/data..."
 
 echo "Estructura inicial preparada."

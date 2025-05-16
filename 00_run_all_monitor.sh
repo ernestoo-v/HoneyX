@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-SCRIPTS_DIR="scripts"
+SCRIPTS_DIR="scripts_monitor"
 SCRIPTS=(
   "01_setup.sh"
   "02_gen_compose.sh"
