@@ -23,12 +23,13 @@ services:
       - ./grafana/data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
 
-  mi_loki:
+  loki:
     image: grafana/loki:2.9.0
     container_name: mi_loki
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
-      - ./config/loki-config.yaml:/etc/loki/local-config.yaml
+      - loki-data:/var/loki
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
     ports:
       - "3100:3100"
     networks:
