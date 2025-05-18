@@ -3,30 +3,29 @@
 
 set -e
 
-BASE_DIR="honeypot"
-GF_PROV_DIR="$BASE_DIR/grafana/provisioning"          # raíz de provisioning en el host
-GF_DS="$GF_PROV_DIR/datasources"
-GF_DB="$GF_PROV_DIR/dashboards"                      # ← aquí irá el YAML *y* el JSON
+# ----- rutas host -----
+DS_DIR="$BASE_DIR/grafana/provisioning/datasources"      # YAML datasource
+PR_DIR="$BASE_DIR/grafana/provisioning/dashboards"       # YAML provider
+DB_DIR="$BASE_DIR/grafana/dashboards"                    # JSON dashboards
 
 echo "Generando datasource Loki…"
-cat > "$GF_DS/loki.yml" <<'EOF'
+cat > "$DS_DIR/loki.yml" <<'EOF'
 apiVersion: 1
 datasources:
   - name: Loki
     uid: loki_uid
     type: loki
     access: proxy
-    url: http://loki:3100   # ← coincide con nombre del servicio
+    url: http://loki:3100
     isDefault: true
     editable: false
     jsonData:
       maxLines: 1000
-
 EOF
 
 echo "Generando provider de dashboards…"
 # IMPORTANTE: la ruta ES LA DEL CONTENEDOR, no la del host
-cat > "$GF_DB/honeypot_provider.yml" <<'EOF'
+cat > "$PR_DIR/honeypot_provider.yml" <<'EOF'
 apiVersion: 1
 providers:
   - name: Honeypot default
@@ -36,12 +35,11 @@ providers:
     allowUiUpdates: true
     updateIntervalSeconds: 30
     options:
-      path: /var/lib/grafana-dashboards   # ← ruta montada arriba
+      path: /var/lib/grafana-dashboards        # ← ruta del contenedor
       foldersFromFilesStructure: true
 EOF
-
 echo "Creando dashboard Honeypot Overview…"
-cat > "$GF_DB/honeypot_overview.json" <<'EOF'
+cat > "$DB_DIR/honeypot/honeypot_overview.json" <<'EOF'
 {
   "annotations": {
     "list": [
