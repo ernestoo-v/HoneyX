@@ -4,18 +4,12 @@
 
 set -euo pipefail
 
-SCRIPTS_DIR="scripts"
-# El primer script requiere sudo, el resto no
+SCRIPTS_DIR="scripts_monitor"
 SCRIPTS=(
   "01_setup.sh"
   "02_gen_compose.sh"
-  "03_cowrie.sh"
-  "04_ftp.sh"
-  "05_apache.sh"
-  "06_mysql.sh"
-  "061_sql_init.sh"
-  "07_loki_promtail.sh"
-  "08_prometheus_grafana.sh"
+  "03_loki.sh"
+  "04_grafana.sh"
 )
 
 echo "==> Iniciando ejecución de todos los scripts..."
@@ -31,11 +25,7 @@ for script in "${SCRIPTS[@]}"; do
   fi
 
   echo "----> Ejecutando $script..."
-  if [[ "$script" == "01_setup.sh" ]]; then
-    sudo bash "$SCRIPT_PATH"
-  else
-    bash "$SCRIPT_PATH"
-  fi
+  bash "$SCRIPT_PATH"
   echo "----> $script completado."
 done
 

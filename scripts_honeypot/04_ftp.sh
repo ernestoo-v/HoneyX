@@ -23,16 +23,22 @@ cat > $DIR/proftpd.conf << 'EOF'
 ServerName "ProFTPD Honeypot"
 ServerType standalone
 DefaultServer on
+
 Port 21
+
 PassivePorts 21100 21110
+
 SystemLog /var/log/proftpd/proftpd.log
 ExtendedLog /var/log/proftpd/access.log AUTH,READ,WRITE
 TransferLog /var/log/proftpd/transfer.log
 LogFormat commandLog "%h %l %u %t \"%r\" %s"
 ExtendedLog /var/log/proftpd/commands.log ALL commandLog
+
 DefaultRoot ~
+
 TimesGMT off
 SetEnv TZ :/etc/localtime
+
 ServerIdent on "FTP Honeypot Listo"
 EOF
 
