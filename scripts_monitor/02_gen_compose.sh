@@ -20,9 +20,13 @@ services:
       dmz:
         ipv4_address: 172.18.0.13
     volumes:
-      - ./grafana/data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./honeypot/grafana/dashboards:/var/lib/grafana/dashboards
+      # 1) Datos internos de Grafana
+      - ./honeypot/grafana/data:/var/lib/grafana
+      # 2) Provisioning completo (datasources + dashboards)
+      - ./honeypot/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
 
   mi_loki:
     image: grafana/loki:2.9.0

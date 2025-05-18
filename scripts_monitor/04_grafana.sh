@@ -2,16 +2,18 @@
 # 04_grafana.sh — Aprovisionar Grafana (datasource + dashboards)
 
 set -e
-GF_PROV_DS="honeypot/grafana/provisioning/datasources"
-GF_PROV_DB="honeypot/grafana/provisioning/dashboards"
-GF_DASH="honeypot/grafana/dashboards"
+
+BASE_DIR="honeypot"
+GF_PROV_DIR="$BASE_DIR/grafana/provisioning"          # raíz de provisioning en el host
+GF_DS="$GF_PROV_DIR/datasources"
+GF_DB="$GF_PROV_DIR/dashboards"                      # ← aquí irá el YAML *y* el JSON
 
 echo "Generando datasource Loki…"
-cat > $GF_PROV_DS/loki.yml <<'EOF'
+cat > "$GF_DS/loki.yml" <<'EOF'
 apiVersion: 1
 datasources:
   - name: Loki
-    uid: loki          # uid interno para referenciarlo desde paneles
+    uid: loki
     type: loki
     access: proxy
     url: http://mi_loki:3100
@@ -19,23 +21,24 @@ datasources:
       maxLines: 1000
 EOF
 
-echo "Generando proveedor de dashboards…"
-cat > $GF_PROV_DB/honeypot_dashboards.yml <<'EOF'
+echo "Generando provider de dashboards…"
+# IMPORTANTE: la ruta ES LA DEL CONTENEDOR, no la del host
+cat > "$GF_DB/honeypot_provider.yml" <<'EOF'
 apiVersion: 1
 providers:
   - name: Honeypot default
     orgId: 1
-    folder: Honeypot          # carpeta visible en la UI de Grafana
+    folder: Honeypot
     type: file
     disableDeletion: false
     updateIntervalSeconds: 30
     allowUiUpdates: true
     options:
-      path: /var/lib/grafana/dashboards   # ↔  monta tu $BASE_DIR/grafana/dashboards aquí
+      path: /etc/grafana/provisioning/dashboards
 EOF
 
-echo "Generando dashboard Honeypot por defecto…"
-cat > $GF_DASH/honeypot_overview.json <<'EOF'
+echo "Creando dashboard Honeypot Overview…"
+cat > "$GF_DB/honeypot_overview.json" <<'EOF'
 {
   "uid": "honeypot-overview",
   "title": "Honeypot Overview",
@@ -91,4 +94,4 @@ cat > $GF_DASH/honeypot_overview.json <<'EOF'
 }
 EOF
 
-echo "Grafana configurado con datasource, provisioning y dashboard por defecto."
+echo "Datasource y dashboard listos."
