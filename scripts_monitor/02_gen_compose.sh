@@ -22,6 +22,7 @@ services:
     volumes:
       - ./grafana/data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./honeypot/grafana/dashboards:/var/lib/grafana/dashboards
 
   mi_loki:
     image: grafana/loki:2.9.0

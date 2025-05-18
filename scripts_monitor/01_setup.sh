@@ -4,12 +4,14 @@
 set -e
 BASE_DIR="honeypot"
 
-# Crear estructura de carpetas
-mkdir -p $BASE_DIR/{grafana/data,grafana/provisioning/datasources,config}
-echo "Creando directorios necesarios..."
+echo "Creando directorios necesarios…"
+#   grafana/data……………… datos internos de Grafana (BBDD, sesiones…)
+#   grafana/dashboards……  JSON de dashboards que se cargarán por provisioning
+#   grafana/provisioning/{datasources,dashboards}… ficheros *.yml de provisioning
+mkdir -p $BASE_DIR/{grafana/{data,dashboards,provisioning/{datasources,dashboards}},config}
 
-# Asignar permisos adecuados para Grafana
-sudo chown -R 472:472 $BASE_DIR/grafana/data
-echo "Asignando permisos a grafana/data..."
+# Permisos para el usuario UID 472 (grafana dentro del contenedor)
+echo "Asignando permisos a grafana/data y grafana/dashboards…"
+sudo chown -R 472:472 $BASE_DIR/grafana/{data,dashboards}
 
 echo "Estructura inicial preparada."
