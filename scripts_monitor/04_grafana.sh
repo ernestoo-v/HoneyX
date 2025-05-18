@@ -13,7 +13,7 @@ cat > "$GF_DS/loki.yml" <<'EOF'
 apiVersion: 1
 datasources:
   - name: Loki
-    uid: loki
+    uid: loki_uid
     type: loki
     access: proxy
     url: http://mi_loki:3100
@@ -65,7 +65,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -146,7 +146,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "count_over_time({job=\"mysql\"}[$__interval])",
           "legendFormat": "MySQL Logs",
@@ -160,7 +160,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -238,7 +238,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "sum by (job) (count_over_time({job=~\".+\"}[1h]))",
           "queryType": "instant",
@@ -251,7 +251,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -302,7 +302,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "sum by (job) (count_over_time({job=~\".+\"}[1h]))",
           "queryType": "instant",
@@ -315,7 +315,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -396,7 +396,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "sum(rate({job=\"mysql\"} |= \"error\" [$__interval])) by (instance)",
           "legendFormat": "Errores MySQL - {{instance}}",
@@ -410,7 +410,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -461,7 +461,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "topk(5, sum by (user) (count_over_time({job=\"ftp\"} |= \"login failed\" [1h])))",
           "queryType": "instant",
@@ -474,7 +474,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -552,7 +552,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -567,7 +567,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -618,7 +618,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "topk(10, sum by (query) (count_over_time({job=\"mysql\"} |= \"SELECT\" [1h])))",
           "queryType": "instant",
@@ -631,7 +631,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -712,7 +712,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "avg_over_time({job=\"mysql\"} |~ \"query time: [0-9.]+\" | unwrap duration [$__interval])",
           "legendFormat": "Latencia Promedio",
@@ -726,7 +726,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -836,7 +836,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
     {
       "datasource": {
         "type": "loki",
-        "uid": "P8E80F9AEF21F6940"
+        "uid": "loki_uid"
       },
       "fieldConfig": {
         "defaults": {
@@ -917,7 +917,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "count_over_time({job=\"mysql\"} |= \"' OR '1'='1\" [$__interval])",
           "legendFormat": "Injection ' OR '1'='1",
@@ -927,7 +927,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "count_over_time({job=\"mysql\"} |= \"UNION SELECT\" [$__interval])",
           "legendFormat": "Injection UNION SELECT",
@@ -937,7 +937,7 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
         {
           "datasource": {
             "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
+            "uid": "loki_uid"
           },
           "expr": "count_over_time({job=\"mysql\"} |= \"--\" [$__interval])",
           "legendFormat": "Injection Comentario --",

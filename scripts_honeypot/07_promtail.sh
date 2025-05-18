@@ -14,7 +14,7 @@ positions:
   filename: /tmp/positions.yaml
 
 clients:
-  - url: http://10.0.9.14:3100/loki/api/v1/push
+  - url: http://10.0.9.15:3100/loki/api/v1/push
 
 scrape_configs:
   - job_name: apache
