@@ -951,7 +951,223 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
       ],
       "title": "Detección de Intentos de Inyección SQL",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 50
+      },
+      "id": 11,
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "{job=\"apache\",type=\"modsec\"}",
+          "refId": "A",
+          "queryType": "range"
+        }
+      ],
+      "title": "Tabla de Alertas ModSecurity (WAF)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 58
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "sum by (type) (rate({job=\"apache\",type=\"error\"} [$__interval]))",
+          "legendFormat": "Apache Errors",
+          "refId": "A",
+          "queryType": "range"
+        }
+      ],
+      "title": "Errores HTTP Apache (rate)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "drawStyle": "bars"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 58
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by(le) (rate({job=\"mysql\",type=\"slow\"} | unwrap qtime [$__interval])))",
+          "legendFormat": "99th percentile",
+          "refId": "A",
+          "queryType": "range"
+        }
+      ],
+      "title": "Histograma de Tiempos de Consulta Lentos (MySQL Slow Query)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 66
+      },
+      "id": 14,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "topk(10, count_over_time({job=\"apache\",type=\"access\"} | unwrap remote_ip [1h]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "title": "Top 10 IPs más activas en Apache (última hora)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 66
+      },
+      "id": 15,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "topk(10, count_over_time({job=\"apache\",type=\"access\"} |= \"403\" or |= \"404\" | unwrap remote_ip [1h]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "title": "Top 10 IPs con más errores 403/404",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 74
+      },
+      "id": 16,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "topk(10, count_over_time({job=\"ftp\"} |= \"login\" [1h]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "title": "Top 10 Usuarios con Más Conexiones FTP (última hora)",
+      "type": "table"
     }
+    
   ],
   "preload": false,
   "refresh": "5s",
