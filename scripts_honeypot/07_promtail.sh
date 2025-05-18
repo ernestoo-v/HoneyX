@@ -8,159 +8,57 @@ echo "==> Promtail config..."
 cat > $CONF/promtail-config.yaml << 'EOF'
 server:
   http_listen_port: 9080
-  grpc_listen_port: 0          # seguimos sin gRPC
-
 positions:
-  #La metemos en /var/lib para que sobreviva a reinicios y a /tmp cleanups
   filename: /var/lib/promtail/positions.yaml
 
 clients:
-  - url: http://10.0.9.15:3100/loki/api/v1/push
+  - url: http://10.0.2.15:3100/loki/api/v1/push
 
 scrape_configs:
-#─────────────────────────── APACHE ───────────────────────────
+#–––– Apache access / error ––––
   - job_name: apache-access
     static_configs:
-      - targets: [localhost]
-        labels:
-          job: apache
-          type: access        # distinguir access de error facilita las queries
-          env: honeypot
-          __path__: /var/log/apache2/access.log
+      - labels: { job: apache, type: access, __path__: /var/log/apache2/access.log }
     pipeline_stages:
       - regex:
-          expression: '^(?P<remote_ip>\S+) \S+ \S+ \[(?P<timestamp>[^\]]+)] "(?P<method>\S+) (?P<path>\S+) (?P<protocol>[^\"]+)" (?P<status>\d{3}) (?P<size>\d+).*'
-      - labels:
-          remote_ip:
-          method:
-          status:
-      - timestamp:
-          source: timestamp
-          format: '02/Jan/2006:15:04:05 -0700'
+          expression: '^(?P<remote_ip>\S+) .* "(?P<method>\S+) (?P<path>\S+)'
+      - labels: { remote_ip, method }
 
   - job_name: apache-error
     static_configs:
-      - targets: [localhost]
-        labels:
-          job: apache
-          type: error
-          env: honeypot
-          __path__: /var/log/apache2/error.log
-    pipeline_stages:
-      - regex:
-          expression: '^\[(?P<timestamp>[^\]]+)] \[(?P<level>[^\]]+)] \[pid (?P<pid>\d+)\]'
-      - labels:
-          level:
-          pid:
-      - timestamp:
-          source: timestamp
-          # Ej.: Mon Jan 02 15:04:05.123456 2006
-          format: 'Mon Jan 02 15:04:05.000000 2006'
+      - labels: { job: apache, type: error, __path__: /var/log/apache2/error.log }
 
-  - job_name: modsecurity
+#–––– ModSecurity audit (JSON) ––––
+  - job_name: modsec
     static_configs:
-      - targets: [localhost]
-        labels:
-          job: apache
-          type: modsec
-          env: honeypot
-          __path__: /var/log/apache2/modsec_audit.json
+      - labels: { job: apache, type: modsec, __path__: /var/log/modsecurity/*audit*.json }
     pipeline_stages:
       - json:
-      - labels:
-          transaction.id:
-          message:
-          severity:
+          expressions:
+            txid: transaction.id
+            severity: severity
+            client_ip: transaction.client_ip
+            uri: transaction.request.uri
+      - labels: { txid, severity, client_ip }
 
-#─────────────────────────── MYSQL ─────────────────────────────
+#–––– MySQL slow / error ––––
   - job_name: mysql-slow
     static_configs:
-      - targets: [localhost]
-        labels:
-          job: mysql
-          type: slow
-          env: honeypot
-          __path__: /var/log/mysql/slow.log
+      - labels: { job: mysql, type: slow, __path__: /var/log/mysql/slow.log }
     pipeline_stages:
-      - multiline:
-          firstline: '^# Time:'       # junta cada query lenta en un solo entry
+      - multiline: { firstline: '^# Time:' }
       - regex:
-          expression: '^# Time: (?P<timestamp>\d{6}\s+\d{1,2}:\d{2}:\d{2}).*\n# User@Host:.*\n# Query_time: (?P<query_time>[0-9\.]+)'
-      - labels:
-          query_time:
-      - timestamp:
-          source: timestamp
-          format: '060102 15:04:05'
-
-  - job_name: mysql-audit
-    static_configs:
-      - targets: [localhost]
-        labels:
-          job: mysql
-          type: audit
-          env: honeypot
-          __path__: /var/log/mysql/audit.log
-    pipeline_stages:
-      - json:
-      - labels:
-          command_class:
-          user:
-          host:
+          expression: '^# Time: (?P<ts>\d{6}\s+\d{1,2}:\d{2}:\d{2}).*\n# Query_time: (?P<qtime>[0-9\.]+)'
+      - labels: { qtime }
 
   - job_name: mysql-error
     static_configs:
-      - targets: [localhost]
-        labels:
-          job: mysql
-          type: error
-          env: honeypot
-          __path__: /var/log/mysql/error.log
+      - labels: { job: mysql, type: error, __path__: /var/log/mysql/error.log }
 
-#─────────────────────────── FTP (ProFTPD) ─────────────────────
+#–––– ProFTPD ––––
   - job_name: ftp
     static_configs:
-      - targets: [localhost]
-        labels:
-          job: ftp
-          env: honeypot
-          __path__: /var/log/proftpd/*.log
-    # Puedes añadir aquí un regex para separar usuarios/IP si lo necesitas
-
-#─────────────────────────── COWRIE ────────────────────────────
-  - job_name: cowrie
-    static_configs:
-      - targets: [localhost]
-        labels:
-          job: cowrie
-          env: honeypot
-          host: vps1
-          __path__: /cowrie/log/*.json
-    pipeline_stages:
-      - json:
-      - labels:
-          src_ip:
-          username:
-          success:
-
-#─────────────────────────── FAIL2BAN ──────────────────────────
-  - job_name: fail2ban
-    static_configs:
-      - targets: [localhost]
-        labels:
-          job: security
-          type: fail2ban
-          env: honeypot
-          __path__: /var/log/fail2ban.log
-    pipeline_stages:
-      - regex:
-          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*?\[(?P<jail>[^\]]+)\] Ban (?P<ip>\S+)'
-      - labels:
-          jail:
-          ip:
-      - timestamp:
-          source: timestamp
-          format: '2006-01-02 15:04:05'
-
+      - labels: { job: ftp, __path__: /var/log/proftpd/*.log }
 EOF
 
 
