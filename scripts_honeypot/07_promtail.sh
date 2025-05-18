@@ -15,7 +15,7 @@ clients:
   - url: http://10.0.2.15:3100/loki/api/v1/push
 
 scrape_configs:
-#–––– Apache access / error ––––
+#─────────── Apache access / error ───────────
   - job_name: apache-access
     static_configs:
       - labels: { job: apache, type: access, __path__: /var/log/apache2/access.log }
@@ -28,7 +28,7 @@ scrape_configs:
     static_configs:
       - labels: { job: apache, type: error, __path__: /var/log/apache2/error.log }
 
-#–––– ModSecurity audit (JSON) ––––
+#─────────── ModSecurity audit (JSON) ───────────
   - job_name: modsec
     static_configs:
       - labels: { job: apache, type: modsec, __path__: /var/log/modsecurity/*audit*.json }
@@ -41,7 +41,7 @@ scrape_configs:
             uri: transaction.request.uri
       - labels: { txid, severity, client_ip }
 
-#–––– MySQL slow / error ––––
+#─────────── MySQL slow / error / general ───────────
   - job_name: mysql-slow
     static_configs:
       - labels: { job: mysql, type: slow, __path__: /var/log/mysql/slow.log }
@@ -55,7 +55,12 @@ scrape_configs:
     static_configs:
       - labels: { job: mysql, type: error, __path__: /var/log/mysql/error.log }
 
-#–––– ProFTPD ––––
+  - job_name: mysql-general
+    static_configs:
+      - labels: { job: mysql, type: general, __path__: /var/log/mysql/general.log }
+
+
+#─────────── ProFTPD ───────────
   - job_name: ftp
     static_configs:
       - labels: { job: ftp, __path__: /var/log/proftpd/*.log }
