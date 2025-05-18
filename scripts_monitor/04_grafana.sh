@@ -4,41 +4,45 @@
 set -e
 
 BASE_DIR="honeypot"
-GF_PROV_DIR="$BASE_DIR/grafana/provisioning"          # raíz de provisioning en el host
-GF_DS="$GF_PROV_DIR/datasources"
-GF_DB="$GF_PROV_DIR/dashboards"                      # ← aquí irá el YAML *y* el JSON
+
+# ----- rutas host -----
+DS_DIR="$BASE_DIR/grafana/provisioning/datasources"      # YAML datasource
+PR_DIR="$BASE_DIR/grafana/provisioning/dashboards"       # YAML provider
+DB_DIR="$BASE_DIR/grafana/dashboards"                    # JSON dashboards
 
 echo "Generando datasource Loki…"
-cat > "$GF_DS/loki.yml" <<'EOF'
+cat > "$DS_DIR/loki.yml" <<'EOF'
 apiVersion: 1
 datasources:
   - name: Loki
     uid: loki_uid
     type: loki
     access: proxy
-    url: http://mi_loki:3100
+    url: http://loki:3100
+    isDefault: true
+    editable: false
     jsonData:
       maxLines: 1000
 EOF
 
 echo "Generando provider de dashboards…"
 # IMPORTANTE: la ruta ES LA DEL CONTENEDOR, no la del host
-cat > "$GF_DB/honeypot_provider.yml" <<'EOF'
+cat > "$PR_DIR/honeypot_provider.yml" <<'EOF'
 apiVersion: 1
 providers:
   - name: Honeypot default
     orgId: 1
     folder: Honeypot
     type: file
-    disableDeletion: false
-    updateIntervalSeconds: 30
     allowUiUpdates: true
+    updateIntervalSeconds: 30
     options:
-      path: /etc/grafana/provisioning/dashboards
+      path: /var/lib/grafana-dashboards        # ← ruta del contenedor
+      foldersFromFilesStructure: true
 EOF
 
 echo "Creando dashboard Honeypot Overview…"
-cat > "$GF_DB/honeypot_overview.json" <<'EOF'
+cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
 {
   "annotations": {
     "list": [
@@ -947,7 +951,223 @@ cat > "$GF_DB/honeypot_overview.json" <<'EOF'
       ],
       "title": "Detección de Intentos de Inyección SQL",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 50
+      },
+      "id": 11,
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "{job=\"apache\",type=\"modsec\"}",
+          "refId": "A",
+          "queryType": "range"
+        }
+      ],
+      "title": "Tabla de Alertas ModSecurity (WAF)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 58
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "sum by (type) (rate({job=\"apache\",type=\"error\"} [$__interval]))",
+          "legendFormat": "Apache Errors",
+          "refId": "A",
+          "queryType": "range"
+        }
+      ],
+      "title": "Errores HTTP Apache (rate)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "drawStyle": "bars"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 58
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by(le) (rate({job=\"mysql\",type=\"slow\"} | unwrap qtime [$__interval])))",
+          "legendFormat": "99th percentile",
+          "refId": "A",
+          "queryType": "range"
+        }
+      ],
+      "title": "Histograma de Tiempos de Consulta Lentos (MySQL Slow Query)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 66
+      },
+      "id": 14,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "topk(10, count_over_time({job=\"apache\",type=\"access\"} | unwrap remote_ip [1h]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "title": "Top 10 IPs más activas en Apache (última hora)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 66
+      },
+      "id": 15,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "topk(10, count_over_time({job=\"apache\",type=\"access\"} |= \"403\" or |= \"404\" | unwrap remote_ip [1h]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "title": "Top 10 IPs con más errores 403/404",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki_uid"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 74
+      },
+      "id": 16,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "topk(10, count_over_time({job=\"ftp\"} |= \"login\" [1h]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "title": "Top 10 Usuarios con Más Conexiones FTP (última hora)",
+      "type": "table"
     }
+    
   ],
   "preload": false,
   "refresh": "5s",
