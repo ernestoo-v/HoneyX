@@ -16,16 +16,11 @@ datasources:
     uid: loki_uid
     type: loki
     access: proxy
-    url: http://loki:3100        # ⇦ nombre de servicio Docker
+    url: http://loki:3100   # ← coincide con nombre del servicio
     isDefault: true
     editable: false
     jsonData:
       maxLines: 1000
-      derivedFields:             # correlación con trazas o métricas (opcional)
-        - name: trace_id
-          matcherRegex: 'traceID=(\\w+)'
-          datasourceUid: tempo_uid   # si añades Tempo después
-          url: $${__value.raw}       # click → abre la traza
 
 EOF
 
@@ -38,14 +33,11 @@ providers:
     orgId: 1
     folder: Honeypot
     type: file
-    disableDeletion: false
-    updateIntervalSeconds: 30
     allowUiUpdates: true
+    updateIntervalSeconds: 30
     options:
-      # Cada JSON dentro de esta carpeta aparece en Grafana → Honeypot
-      path: /var/lib/grafana-dashboards/honeypot
+      path: /var/lib/grafana-dashboards   # ← ruta montada arriba
       foldersFromFilesStructure: true
-
 EOF
 
 echo "Creando dashboard Honeypot Overview…"

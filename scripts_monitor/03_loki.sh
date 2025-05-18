@@ -6,16 +6,18 @@ CONF="honeypot/config"
 
 echo "==> Loki config..."
 cat > $CONF/loki-config.yaml << 'EOF'
-auth_enabled: false          # ⇦ seguirá sin login, pero podrás activarlo más adelante
+# ─────────── AUTENTICACIÓN ───────────
+auth_enabled: false                 # Loki sin login (cámbialo cuando lo expongas)
 
+# ─────────── SERVIDOR ────────────────
 server:
   http_listen_port: 3100
   grpc_listen_port: 9096
-  log_level: info            # Añadido: verbosidad básica para debug
+  log_level: info                    # Verbosidad básica para debug
 
-#────────────── INGESTER ──────────────
+# ─────────── INGESTER ────────────────
 ingester:
-  wal:                       # ⇦ habilita Write-Ahead-Log → nunca pierdes buffers
+  wal:                               # Write-Ahead-Log → evita pérdida de buffers
     enabled: true
     dir: /var/loki/wal
   lifecycler:
@@ -23,13 +25,13 @@ ingester:
       kvstore:
         store: inmemory
       replication_factor: 1
-  chunk_idle_period: 5m      # descarga chunks inactivos antes
+  chunk_idle_period: 5m              # Descarga chunks inactivos con rapidez
   max_chunk_age: 1h
 
-#────────────── GLOBAL ────────────────
+# ─────────── PARÁMETROS COMUNES ──────
 common:
-  instance_addr: 0.0.0.0     # dentro del contenedor es la forma correcta
-  path_prefix: /var/loki      # ya no /tmp → volumen persistente
+  instance_addr: 0.0.0.0             # Válido dentro del contenedor
+  path_prefix: /var/loki             # Volumen persistente
   storage:
     filesystem:
       chunks_directory: /var/loki/chunks
@@ -38,48 +40,56 @@ common:
     kvstore:
       store: inmemory
 
-#────────────── ESQUEMA / ÍNDICES ─────
+# ─────────── ESQUEMA / ÍNDICES ───────
 schema_config:
   configs:
     - from: 2020-10-24
       store: boltdb-shipper
       object_store: filesystem
-      schema: v12            # v12 trae etiquetas ilimitadas y mejor compactor
+      schema: v12                    # v12 → etiquetas ilimitadas y compactor mejorado
       index:
         prefix: index_
         period: 24h
 
-#────────────── COMPACTOR + RETENCIÓN ─
+# ─────────── COMPACTOR + RETENCIÓN ───
 compactor:
   working_directory: /var/loki/compactor
   shared_store: filesystem
   retention_enabled: true
 
 limits_config:
-  # borra todo a los 30 d excepto honeypot (ver abajo)
-  retention_period: 30d
-  retention_stream:
-    # guarda tu laboratorio 6 meses
+  retention_period: 30d              # Retención global
+  retention_stream:                  # Retención específica por selector
     - selector: '{env="honeypot"}'
-      priority: 1
-      period: 180d
+      priority: 1                    # Se aplica primero
+      period: 180d                   # 6 meses para flujos de tu laboratorio
 
-#────────────── QUERY FRONTEND ────────
+# ─────────── QUERY FRONTEND ──────────
 query_scheduler:
   max_outstanding_requests_per_tenant: 4096
+
 frontend:
   max_outstanding_per_tenant: 4096
 
-#────────────── RULER / ALERTAS ───────
+query_range:
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 100
+
+# ─────────── RULER / ALERTAS ─────────
 ruler:
-  alertmanager_url: http://alertmanager:9093   # container-name, no localhost
+  # Descomenta la línea siguiente si incorporas Alertmanager en el stack:
+  # alertmanager_url: http://alertmanager:9093
   storage:
     type: local
     local:
       directory: /var/loki/rules
 
+# ─────────── TELEMETRÍA ──────────────
 analytics:
-  reporting_enabled: false
+  reporting_enabled: false           # Sin estadísticas a Grafana Labs
 
 EOF
 
