@@ -3,6 +3,8 @@
 
 set -e
 
+BASE_DIR="honeypot"
+
 # ----- rutas host -----
 DS_DIR="$BASE_DIR/grafana/provisioning/datasources"      # YAML datasource
 PR_DIR="$BASE_DIR/grafana/provisioning/dashboards"       # YAML provider
@@ -38,8 +40,9 @@ providers:
       path: /var/lib/grafana-dashboards        # ← ruta del contenedor
       foldersFromFilesStructure: true
 EOF
+
 echo "Creando dashboard Honeypot Overview…"
-cat > "$DB_DIR/honeypot/honeypot_overview.json" <<'EOF'
+cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
 {
   "annotations": {
     "list": [
