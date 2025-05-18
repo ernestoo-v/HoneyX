@@ -73,13 +73,15 @@ services:
   mi_promtail:
     image: grafana/promtail:2.9.0
     container_name: mi_promtail
-    volumes:
-      - ./volumenes/apache_logs:/var/log/apache2
-      - ./volumenes/mysql_log:/var/log/mysql
-      - ./volumenes/ftp_logs:/var/log/proftpd
-      - ./volumenes/cowrie_logs:/cowrie/log
-      - ./config/promtail-config.yaml:/etc/promtail/config.yml
+    restart: unless-stopped
     command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./volumenes/apache_logs:/var/log/apache2:ro
+      - ./volumenes/mysql_log:/var/log/mysql:ro
+      - ./volumenes/ftp_logs:/var/log/proftpd:ro
+      - ./volumenes/cowrie_logs:/cowrie/log:ro
+      - ./config/promtail-config.yaml:/etc/promtail/config.yml:ro
+      - promtail-data:/var/lib/promtail
     networks:
       dmz:
         ipv4_address: 172.18.0.15
