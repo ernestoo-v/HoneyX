@@ -64,7 +64,12 @@ scrape_configs:
   - job_name: ftp
     static_configs:
       - labels: { job: ftp, __path__: /var/log/proftpd/*.log }
+
+#─────────── Fakessh ───────────
+  - job_name: fakessh
+    static_configs:
+      - labels: { job: fakessh, __path__: /var/log/fakessh/fakessh.log }
+
 EOF
 
-
-echo "Loki y Promtail configurados."
+echo "Promtail configurado."
