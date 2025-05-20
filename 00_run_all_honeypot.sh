@@ -9,7 +9,6 @@ SCRIPTS_DIR="scripts_honeypot"
 SCRIPTS=(
   "01_setup.sh"
   "02_gen_compose.sh"
-  "03_prometheus.sh"
   "04_ftp.sh"
   "05_apache.sh"
   "06_mysql.sh"
