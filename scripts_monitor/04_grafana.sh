@@ -67,43 +67,6 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
   "links": [],
   "panels": [
     {
-      "datasource": "$DS_LOKI",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "dedupStrategy": "none",
-        "enableInfiniteScrolling": false,
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "direction": "backward",
-          "editorMode": "code",
-          "expr": "{job=\"apache\",type=\"$type\"}",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Apache Logs ($type)",
-      "type": "logs"
-    },
-    {
       "datasource": {
         "type": "loki",
         "uid": "$DS_LOKI"
@@ -523,8 +486,8 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
       },
       {
         "current": {
-          "text": "access",
-          "value": "access"
+          "text": "apache",
+          "value": "apache"
         },
         "datasource": {
           "type": "loki",
@@ -535,7 +498,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
         "name": "type",
         "options": [],
         "query": {
-          "label": "type",
+          "label": "job",
           "refId": "LokiVariableQueryEditor-VariableQuery",
           "stream": "",
           "type": 1
@@ -553,7 +516,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
   "timezone": "browser",
   "title": "Apache Logs Dashboard",
   "uid": "apache-logs",
-  "version": 2
+  "version": 1
 }
 EOF
 
