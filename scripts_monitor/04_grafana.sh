@@ -63,7 +63,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 21,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -93,7 +93,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "expr": "{job=\"apache\",env=\"$env\",type=\"$type\"}",
+          "expr": "{job=\"apache\",type=~\"$type\"}",
           "refId": "A"
         }
       ],
@@ -140,6 +140,18 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
                 "value": 378
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "remote_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 221
+              }
+            ]
           }
         ]
       },
@@ -169,7 +181,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
           "direction": "backward",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "{job=\"apache\", env=\"$env\", type=\"access\"} |~ \" [45][0-9][0-9] \" | regexp `(?P<ip>\\d+\\.\\d+\\.\\d+\\.\\d+) - - \\[[^\\]]+\\] \\\"(?P<request>[A-Z]+ [^\\\"]+ HTTP/[0-9.]+)\\\" (?P<code>[45][0-9]{2})`",
+          "expr": "{job=\"apache\",type=\"access\"} |~ \" [45][0-9][0-9] \" | regexp `(?P<ip>\\d+\\.\\d+\\.\\d+\\.\\d+) - - \\[[^\\]]+\\] \\\"(?P<request>[A-Z]+ [^\\\"]+ HTTP/[0-9.]+)\\\" (?P<code>[45][0-9]{2})`",
           "format": "logs",
           "instant": false,
           "queryType": "range",
@@ -191,8 +203,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
           "options": {
             "excludeByName": {
               "Line": true,
-              "code": true,
-              "env": true,
+              "code": false,
               "filename": true,
               "id": true,
               "ip": true,
@@ -207,7 +218,6 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
               "Line": 6,
               "Time": 0,
               "code": 4,
-              "env": 9,
               "filename": 10,
               "id": 8,
               "ip": 2,
@@ -313,7 +323,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "expr": "rate({job=\"apache\",env=\"$env\",type=\"access\"}[1m])",
+          "expr": "rate({job=\"apache\",type=\"access\"}[1m])",
           "refId": "A"
         }
       ],
@@ -402,7 +412,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "expr": "sum by (status)(rate({job=\"apache\",env=\"$env\",type=\"access\"}[1m]))",
+          "expr": "sum by (status)(rate({job=\"apache\",type=\"access\"}[1m]))",
           "refId": "A"
         }
       ],
@@ -469,7 +479,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "expr": "topk(10, sum by (remote_ip) (count_over_time({job=\"apache\", env=\"$env\", type=\"access\"}[5m])))",
+          "expr": "topk(10, sum by (remote_ip) (count_over_time({job=\"apache\",type=\"access\"}[5m])))",
           "instant": true,
           "refId": "A"
         }
@@ -517,21 +527,9 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
         "label": "Log type",
         "name": "type",
         "options": [],
-        "query": "label_values({job=\"apache\",env=\"honeypot\"}, type)",
+        "query": "label_values({job=\"apache\"}, type)",
         "refresh": 2,
         "type": "query"
-      },
-      {
-        "current": {
-          "text": "honeypot",
-          "value": "honeypot"
-        },
-        "hide": 2,
-        "label": "Environment",
-        "name": "env",
-        "query": "honeypot",
-        "skipUrlSync": true,
-        "type": "constant"
       }
     ]
   },
@@ -543,7 +541,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
   "timezone": "browser",
   "title": "Apache Logs Dashboard",
   "uid": "apache-logs",
-  "version": 5
+  "version": 6
 }
 EOF
 
