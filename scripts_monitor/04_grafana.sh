@@ -93,7 +93,10 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "expr": "{job=\"apache\",type=~\"$type\"}",
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{job=\"apache\",type=\"$type\"}",
+          "queryType": "range",
           "refId": "A"
         }
       ],
@@ -523,11 +526,20 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
           "text": "access",
           "value": "access"
         },
-        "datasource": "$DS_LOKI",
+        "datasource": {
+          "type": "loki",
+          "uid": "${DS_LOKI}"
+        },
+        "definition": "",
         "label": "Log type",
         "name": "type",
         "options": [],
-        "query": "label_values({job=\"apache\"}, type)",
+        "query": {
+          "label": "type",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
         "refresh": 2,
         "type": "query"
       }
@@ -541,7 +553,7 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
   "timezone": "browser",
   "title": "Apache Logs Dashboard",
   "uid": "apache-logs",
-  "version": 6
+  "version": 2
 }
 EOF
 
