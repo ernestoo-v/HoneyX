@@ -62,200 +62,48 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 1,
-  "id": 10,
+  "graphTooltip": 0,
+  "id": 21,
   "links": [],
   "panels": [
     {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
+      "datasource": "$DS_LOKI",
       "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
+        "defaults": {},
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 10,
+        "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
       },
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "count_over_time({job=\"mysql\"}[$__interval])",
-          "legendFormat": "MySQL Logs",
-          "queryType": "range",
+          "expr": "{job=\"apache\",env=\"$env\",type=\"$type\"}",
           "refId": "A"
         }
       ],
-      "title": "Gráfico de Líneas - Tasa de Logs MySQL",
-      "type": "timeseries"
+      "title": "Apache Logs ($type)",
+      "type": "logs"
     },
     {
       "datasource": {
         "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "sum by (job) (count_over_time({job=~\".+\"}[1h]))",
-          "queryType": "instant",
-          "refId": "B"
-        }
-      ],
-      "title": "Gráfico de Barras - Logs por Job (última hora)",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
+        "uid": "$DS_LOKI"
       },
       "fieldConfig": {
         "defaults": {
@@ -280,172 +128,26 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
             ]
           }
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 3,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "sum by (job) (count_over_time({job=~\".+\"}[1h]))",
-          "queryType": "instant",
-          "refId": "C"
-        }
-      ],
-      "title": "Tabla - Logs por Job (última hora)",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Petición"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+            "properties": [
               {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
+                "id": "custom.width",
+                "value": 378
               }
             ]
           }
-        },
-        "overrides": []
+        ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 8
-      },
-      "id": 4,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "sum(rate({job=\"mysql\"} |= \"error\" [$__interval])) by (instance)",
-          "legendFormat": "Errores MySQL - {{instance}}",
-          "queryType": "range",
-          "refId": "D"
-        }
-      ],
-      "title": "Gráfico de Líneas - Tasa de Errores en Logs de MySQL",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 10,
+        "w": 24,
         "x": 0,
-        "y": 16
+        "y": 10
       },
       "id": 5,
       "options": {
@@ -458,28 +160,79 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
           ],
           "show": false
         },
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": []
       },
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "topk(5, sum by (user) (count_over_time({job=\"ftp\"} |= \"login failed\" [1h])))",
-          "queryType": "instant",
-          "refId": "E"
+          "direction": "backward",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "{job=\"apache\", env=\"$env\", type=\"access\"} |~ \" [45][0-9][0-9] \" | regexp `(?P<ip>\\d+\\.\\d+\\.\\d+\\.\\d+) - - \\[[^\\]]+\\] \\\"(?P<request>[A-Z]+ [^\\\"]+ HTTP/[0-9.]+)\\\" (?P<code>[45][0-9]{2})`",
+          "format": "logs",
+          "instant": false,
+          "queryType": "range",
+          "refId": "A"
         }
       ],
-      "title": "Tabla - Top 5 Usuarios con Más Intentos Fallidos de Login en FTP",
+      "title": "Errores HTTP Detallados",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "delimiter": ",",
+            "pattern": "",
+            "source": "labels"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Line": true,
+              "code": true,
+              "env": true,
+              "filename": true,
+              "id": true,
+              "ip": true,
+              "job": true,
+              "labels": true,
+              "line": true,
+              "tsNs": true,
+              "type": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Line": 6,
+              "Time": 0,
+              "code": 4,
+              "env": 9,
+              "filename": 10,
+              "id": 8,
+              "ip": 2,
+              "job": 11,
+              "labels": 5,
+              "method": 12,
+              "remote_ip": 1,
+              "request": 3,
+              "status": 13,
+              "tsNs": 7,
+              "type": 14
+            },
+            "renameByName": {
+              "code": "Código",
+              "ip": "IP",
+              "request": "Petición",
+              "ts": "Time"
+            }
+          }
+        }
+      ],
       "type": "table"
     },
     {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
+      "datasource": "$DS_LOKI",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -491,16 +244,117 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "fillOpacity": 80,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
             "lineWidth": 1,
+            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 2,
+      "interval": "1s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Name",
+          "sortDesc": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "rate({job=\"apache\",env=\"$env\",type=\"access\"}[1m])",
+          "refId": "A"
+        }
+      ],
+      "title": "Requests per second",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "$DS_LOKI",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -526,53 +380,37 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 20
       },
-      "id": 6,
+      "id": 3,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
+        "stacking": {
+          "mode": "normal"
+        },
         "tooltip": {
           "hideZeros": false,
           "mode": "single",
           "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
+        }
       },
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "direction": "backward",
-          "editorMode": "code",
-          "expr": "sum(rate({job=\"apache\"} |= \"404\" [$__interval]) + rate({job=\"apache\"} |= \"403\" [$__interval])) by (client_ip)",
-          "queryType": "range",
-          "refId": "F"
+          "expr": "sum by (status)(rate({job=\"apache\",env=\"$env\",type=\"access\"}[1m]))",
+          "refId": "A"
         }
       ],
-      "title": "Gráfico de Barras - Patrones de Acceso Sospechosos en Apache",
-      "type": "barchart"
+      "title": "HTTP Status Codes (rate)",
+      "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
+      "datasource": "$DS_LOKI",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -602,192 +440,21 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 28
       },
-      "id": 7,
+      "id": 4,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "topk(10, sum by (query) (count_over_time({job=\"mysql\"} |= \"SELECT\" [1h])))",
-          "queryType": "instant",
-          "refId": "G"
-        }
-      ],
-      "title": "Tabla - Consultas SQL Más Frecuentes en MySQL",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 24
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "avg_over_time({job=\"mysql\"} |~ \"query time: [0-9.]+\" | unwrap duration [$__interval])",
-          "legendFormat": "Latencia Promedio",
-          "queryType": "range",
-          "refId": "H"
-        }
-      ],
-      "title": "Gráfico de Líneas - Latencia Promedio de Consultas en MySQL",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
-          }
-        },
-        "overrides": [
+        "columns": [
           {
-            "matcher": {
-              "id": "byName",
-              "options": "Line"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 600
-              },
-              {
-                "id": "displayName",
-                "value": "Query and Client IP"
-              }
-            ]
+            "field": "remote_ip",
+            "text": "IP"
           },
           {
-            "matcher": {
-              "id": "byName",
-              "options": "Timestamp"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 319
-              }
-            ]
+            "field": "__value__",
+            "text": "Connections"
           }
-        ]
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 32
-      },
-      "id": 9,
-      "options": {
-        "cellHeight": "sm",
+        ],
         "footer": {
           "countRows": false,
           "fields": "",
@@ -797,394 +464,86 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "tsNs"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "direction": "backward",
-          "editorMode": "code",
-          "expr": "{job=\"mysql\"} |~ \"SELECT|INSERT|UPDATE|DELETE\" | regexp `(?P<query>(SELECT|INSERT|UPDATE|DELETE)\\s+[^;]+)` | regexp `client_ip:\\s*(?P<client_ip>\\S+)` | line_format \"{{.query}} from {{.client_ip}}\"",
-          "queryType": "range",
+          "expr": "topk(10, sum by (remote_ip) (count_over_time({job=\"apache\", env=\"$env\", type=\"access\"}[5m])))",
+          "instant": true,
           "refId": "A"
         }
       ],
-      "title": "SQL Queries Executed with Client IPs",
+      "title": "Top 10 IPs by Connections",
       "transformations": [
         {
-          "id": "organize",
+          "id": "labelsToFields",
           "options": {
-            "excludeByName": {
-              "Value": true
-            },
-            "includeByName": {},
-            "indexByName": {
-              "Line": 1,
-              "Time": 0
-            },
-            "renameByName": {
-              "Line": "Query and Client IP",
-              "Time": "Timestamp",
-              "id": ""
-            }
+            "mode": "values"
           }
         }
       ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 42
-      },
-      "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "count_over_time({job=\"mysql\"} |= \"' OR '1'='1\" [$__interval])",
-          "legendFormat": "Injection ' OR '1'='1",
-          "queryType": "range",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "count_over_time({job=\"mysql\"} |= \"UNION SELECT\" [$__interval])",
-          "legendFormat": "Injection UNION SELECT",
-          "queryType": "range",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki_uid"
-          },
-          "expr": "count_over_time({job=\"mysql\"} |= \"--\" [$__interval])",
-          "legendFormat": "Injection Comentario --",
-          "queryType": "range",
-          "refId": "C"
-        }
-      ],
-      "title": "Detección de Intentos de Inyección SQL",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 50
-      },
-      "id": 11,
-      "options": {
-        "showHeader": true,
-        "cellHeight": "sm"
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "expr": "{job=\"apache\",type=\"modsec\"}",
-          "refId": "A",
-          "queryType": "range"
-        }
-      ],
-      "title": "Tabla de Alertas ModSecurity (WAF)",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "drawStyle": "line"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 58
-      },
-      "id": 12,
-      "options": {
-        "legend": {
-          "showLegend": true,
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "expr": "sum by (type) (rate({job=\"apache\",type=\"error\"} [$__interval]))",
-          "legendFormat": "Apache Errors",
-          "refId": "A",
-          "queryType": "range"
-        }
-      ],
-      "title": "Errores HTTP Apache (rate)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "custom": {
-            "drawStyle": "bars"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 58
-      },
-      "id": 13,
-      "options": {
-        "legend": {
-          "showLegend": true,
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.99, sum by(le) (rate({job=\"mysql\",type=\"slow\"} | unwrap qtime [$__interval])))",
-          "legendFormat": "99th percentile",
-          "refId": "A",
-          "queryType": "range"
-        }
-      ],
-      "title": "Histograma de Tiempos de Consulta Lentos (MySQL Slow Query)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 66
-      },
-      "id": 14,
-      "options": {
-        "showHeader": true
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "expr": "topk(10, count_over_time({job=\"apache\",type=\"access\"} | unwrap remote_ip [1h]))",
-          "refId": "A",
-          "queryType": "instant"
-        }
-      ],
-      "title": "Top 10 IPs más activas en Apache (última hora)",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 66
-      },
-      "id": 15,
-      "options": {
-        "showHeader": true
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "expr": "topk(10, count_over_time({job=\"apache\",type=\"access\"} |= \"403\" or |= \"404\" | unwrap remote_ip [1h]))",
-          "refId": "A",
-          "queryType": "instant"
-        }
-      ],
-      "title": "Top 10 IPs con más errores 403/404",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki_uid"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 74
-      },
-      "id": 16,
-      "options": {
-        "showHeader": true
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "expr": "topk(10, count_over_time({job=\"ftp\"} |= \"login\" [1h]))",
-          "refId": "A",
-          "queryType": "instant"
-        }
-      ],
-      "title": "Top 10 Usuarios con Más Conexiones FTP (última hora)",
       "type": "table"
     }
-    
   ],
   "preload": false,
   "refresh": "5s",
   "schemaVersion": 41,
-  "tags": [],
+  "tags": [
+    "honeypot",
+    "apache",
+    "logs"
+  ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "Loki",
+          "value": "loki_uid"
+        },
+        "label": "Loki datasource",
+        "name": "DS_LOKI",
+        "options": [],
+        "query": "loki",
+        "refresh": 1,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "text": "access",
+          "value": "access"
+        },
+        "datasource": "$DS_LOKI",
+        "label": "Log type",
+        "name": "type",
+        "options": [],
+        "query": "label_values({job=\"apache\",env=\"honeypot\"}, type)",
+        "refresh": 2,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "honeypot",
+          "value": "honeypot"
+        },
+        "hide": 2,
+        "label": "Environment",
+        "name": "env",
+        "query": "honeypot",
+        "skipUrlSync": true,
+        "type": "constant"
+      }
+    ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Dashboard Personalizado Avanzado",
-  "uid": "celzi2os67fggc",
-  "version": 8
+  "title": "Apache Logs Dashboard",
+  "uid": "apache-logs",
+  "version": 5
 }
 EOF
 
