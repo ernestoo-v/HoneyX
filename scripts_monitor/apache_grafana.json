@@ -1,48 +1,3 @@
-#!/usr/bin/env bash
-# 04_grafana.sh — Aprovisionar Grafana (datasource + dashboards)
-
-set -e
-
-BASE_DIR="honeypot"
-
-# ----- rutas host -----
-DS_DIR="$BASE_DIR/grafana/provisioning/datasources"      # YAML datasource
-PR_DIR="$BASE_DIR/grafana/provisioning/dashboards"       # YAML provider
-DB_DIR="$BASE_DIR/grafana/dashboards"                    # JSON dashboards
-
-echo "Generando datasource Loki…"
-cat > "$DS_DIR/loki.yml" <<'EOF'
-apiVersion: 1
-datasources:
-  - name: Loki
-    uid: loki_uid
-    type: loki
-    access: proxy
-    url: http://loki:3100
-    isDefault: true
-    editable: false
-    jsonData:
-      maxLines: 1000
-EOF
-
-echo "Generando provider de dashboards…"
-# IMPORTANTE: la ruta ES LA DEL CONTENEDOR, no la del host
-cat > "$PR_DIR/honeypot_provider.yml" <<'EOF'
-apiVersion: 1
-providers:
-  - name: Honeypot default
-    orgId: 1
-    folder: Honeypot
-    type: file
-    allowUiUpdates: true
-    updateIntervalSeconds: 30
-    options:
-      path: /var/lib/grafana-dashboards        # ← ruta del contenedor
-      foldersFromFilesStructure: true
-EOF
-
-echo "Creando dashboard Honeypot Overview…"
-cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
 {
   "annotations": {
     "list": [
@@ -66,6 +21,40 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
   "id": 1,
   "links": [],
   "panels": [
+    {
+      "datasource": "$DS_LOKI",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "expr": "{job=\"apache\",type=~\"$type\"}",
+          "refId": "A"
+        }
+      ],
+      "title": "Apache Logs ($type)",
+      "type": "logs"
+    },
     {
       "datasource": {
         "type": "loki",
@@ -486,23 +475,14 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
       },
       {
         "current": {
-          "text": "apache",
-          "value": "apache"
+          "text": "access",
+          "value": "access"
         },
-        "datasource": {
-          "type": "loki",
-          "uid": "${DS_LOKI}"
-        },
-        "definition": "",
+        "datasource": "$DS_LOKI",
         "label": "Log type",
         "name": "type",
         "options": [],
-        "query": {
-          "label": "job",
-          "refId": "LokiVariableQueryEditor-VariableQuery",
-          "stream": "",
-          "type": 1
-        },
+        "query": "label_values({job=\"apache\"}, type)",
         "refresh": 2,
         "type": "query"
       }
@@ -516,8 +496,5 @@ cat > "$DB_DIR/honeypot_overview.json" <<'EOF'
   "timezone": "browser",
   "title": "Apache Logs Dashboard",
   "uid": "apache-logs",
-  "version": 1
+  "version": 6
 }
-EOF
-
-echo "Datasource y dashboard listos."
