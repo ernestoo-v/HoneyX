@@ -49,6 +49,15 @@ services:
     ports: ["80:80"]
     networks: { dmz: { ipv4_address: 172.18.0.12 } }
 
+#─────────────────── Fake_ssh ───────────────
+  fake_ssh:
+    image: alpine
+    container_name: fake_ssh
+    command: 'sh -c "while true; do echo $$(date) - SSH attempt from fake IP >> /var/log/fakessh.log; sleep 10; done"'
+    volumes:
+      - ./volumenes/fakessh_logs:/var/log
+    networks: { dmz: { ipv4_address: 172.18.0.20 } }
+    
 #─────────────────── Prometheus ───────────────
   prometheus:
     image: prom/prometheus:latest
@@ -80,6 +89,7 @@ services:
       - ./volumenes/apache_logs:/var/log/apache2:ro
       - ./volumenes/mysql_log:/var/log/mysql:ro
       - ./volumenes/ftp_logs:/var/log/proftpd:ro
+      - ./volumenes/fakessh_logs:/var/log/fakessh:ro
       # log JSON de ModSecurity (ruta distinta para evitar solaparse)
       - ./volumenes/modsec_logs:/var/log/modsecurity:ro
       # config & posiciones
