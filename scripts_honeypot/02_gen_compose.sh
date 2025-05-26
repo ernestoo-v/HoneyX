@@ -57,6 +57,26 @@ services:
     volumes:
       - ./volumenes/fakessh_logs:/var/log
     networks: { dmz: { ipv4_address: 172.18.0.20 } }
+    
+#─────────────────── Prometheus ───────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks: { dmz: { ipv4_address: 172.18.0.30 } }
+
+#─────────────────── Node_exporter ───────────────
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    networks: { dmz: { ipv4_address: 172.18.0.32 } }
 
 #─────────────────── Promtail ───────────────
   mi_promtail:
