@@ -22,40 +22,6 @@
   "links": [],
   "panels": [
     {
-      "datasource": "$DS_LOKI",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "dedupStrategy": "none",
-        "enableInfiniteScrolling": false,
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "expr": "{job=\"apache\",type=~\"$type\"}",
-          "refId": "A"
-        }
-      ],
-      "title": "Apache Logs ($type)",
-      "type": "logs"
-    },
-    {
       "datasource": {
         "type": "loki",
         "uid": "$DS_LOKI"
@@ -475,14 +441,23 @@
       },
       {
         "current": {
-          "text": "access",
-          "value": "access"
+          "text": "apache",
+          "value": "apache"
         },
-        "datasource": "$DS_LOKI",
+        "datasource": {
+          "type": "loki",
+          "uid": "${DS_LOKI}"
+        },
+        "definition": "",
         "label": "Log type",
         "name": "type",
         "options": [],
-        "query": "label_values({job=\"apache\"}, type)",
+        "query": {
+          "label": "job",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
         "refresh": 2,
         "type": "query"
       }
@@ -496,5 +471,5 @@
   "timezone": "browser",
   "title": "Apache Logs Dashboard",
   "uid": "apache-logs",
-  "version": 6
+  "version": 1
 }
