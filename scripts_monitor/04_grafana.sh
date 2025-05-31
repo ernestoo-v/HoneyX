@@ -42,7 +42,7 @@ providers:
 EOF
 
 sudo cp scripts_monitor/apache_grafana.json $DB_DIR/
-sudo cp scripts_monitor/mysql_dashboard.json.json $DB_DIR/
+sudo cp scripts_monitor/mysql_dashboard.json $DB_DIR/
 sudo cp scripts_monitor/sql_apache_dashboard.json $DB_DIR/
 
 echo "Datasource y dashboard listos."
