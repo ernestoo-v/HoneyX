@@ -1,0 +1,80 @@
+{
+  "uid": "fakessh-logs",
+  "title": "FakeSSH Logs Dashboard",
+  "tags": [
+    "honeypot",
+    "fakessh",
+    "logs"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 41,
+  "version": 1,
+  "refresh": "5s",
+  "editable": true,
+  "templating": {
+    "list": [
+      {
+        "type": "datasource",
+        "name": "DS_LOKI",
+        "label": "Loki datasource",
+        "query": "loki",
+        "current": {
+          "text": "Loki",
+          "value": "loki_uid"
+        },
+        "refresh": 1
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "name": "Annotations & Alerts",
+        "type": "dashboard",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        }
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Actividad del honeypot fakessh.log",
+      "type": "logs",
+      "datasource": "$DS_LOKI",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "{job=\"fakessh\"}"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "prettifyLogMessage": true
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      }
+    }
+  ]
+}
