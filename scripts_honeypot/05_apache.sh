@@ -2,8 +2,10 @@
 # scripts/05_apache.sh — Orquesta la generación de la web
 set -euo pipefail
 
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # 1) Nombre del script que configura Apache
-APACHE_SETUP="051_create_apache.sh"
+APACHE_SETUP="$BASE_DIR/051_create_apache.sh"
 
 # 2) Verifica si existe el script
 if [[ -f "$APACHE_SETUP" ]]; then
