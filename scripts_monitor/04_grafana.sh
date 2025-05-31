@@ -43,6 +43,9 @@ EOF
 
 sudo cp scripts_monitor/apache_grafana.json $DB_DIR/
 sudo cp scripts_monitor/mysql_dashboard.json $DB_DIR/
-sudo cp scripts_monitor/sql_apache_dashboard.json $DB_DIR/
+sudo cp scripts_monitor/sqli_apache_mysql_dashboard.json $DB_DIR/
+sudo cp scripts_monitor/fakessh_dashboard.json $DB_DIR/
+sudo cp scripts_monitor/proftpd_dashboard.json $DB_DIR/
+
 
 echo "Datasource y dashboard listos."
