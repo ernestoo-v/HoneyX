@@ -23,7 +23,7 @@ fi
 
 # 5) Luego, todos los demás create_*.sh (salta el de Apache)
 
-sudo cp -r web honeypot/web
+sudo cp -r web/* honeypot/web
 
 
 echo "==> ¡Todas las páginas web se han generado correctamente!"
