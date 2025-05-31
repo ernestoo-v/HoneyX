@@ -1,4 +1,6 @@
-<?php include 'db.php'; $db = getDB(); ?>
+<?php 
+session_start();
+include 'db.php'; $db = getDB(); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
