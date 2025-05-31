@@ -17,18 +17,18 @@
 │   ├── 03_prometheus.sh
 │   ├── 04_ftp.sh
 │   ├── 05_apache.sh
+│   ├── 051_create_apache.sh
+│   ├── 06_mysql.sh
 │   ├── 061_sql_init.sh
-│   └── 06_mysql.sh
 |   └── 07_promtail.sh
-|   └── web/
 ├── scripts_monitor/
 │   ├── 01_setup.sh
 │   ├── 02_gen_compose
 │   ├── 03_loki.sh
-│   └── 04_grafana.sh
-|   └── antiguo_grafana.json
+│   ├── 04_grafana.sh
+|   ├── antiguo_grafana.json
 |   └── apache_grafana.json
-├── web_test/
+├── web/
 ├── 00_run_all_honeypot.sh
 ├── 00_run_all_monitor.sh
 └── README.md
