@@ -39,7 +39,6 @@ $db = getDB();
                         <th>Dirección</th>
                         <th>Teléfono</th>
                         <th>Correo Electrónico</th>
-                        <th>Departamento</th>
                         <th>Rol</th>
                         <th>Número de Cuenta Bancaria</th>
                     </tr>
@@ -53,10 +52,9 @@ $db = getDB();
                                 <td>{$empleado['apellido']}</td>
                                 <td>{$empleado['direccion']}</td>
                                 <td>{$empleado['telefono']}</td>
-                                <td>{$empleado['correo_electronico']}</td>
-                                <td>{$empleado['departamento']}</td>
-                                <td>{$empleado['rol']}</td>
-                                <td>{$empleado['numero_cuenta_bancaria']}</td>
+                                <td>{$empleado['email']}</td>
+                                <td>{$empleado['puesto']}</td>
+                                <td>{$empleado['cuenta_bancaria']}</td>
                               </tr>";
                     }
                     ?>
@@ -64,7 +62,37 @@ $db = getDB();
             </table>
         </div>
     </div>
-
+    <!-- Tabla de Usuarios -->
+<div class="mb-5">
+    <h4>Usuarios</h4>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre de Usuario</th>
+                    <th>Email</th>
+                    <th>Contraseña</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $stmt = $db->query("SELECT * FROM usuarios");
+                while ($usuario = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    echo "<tr>
+                            <td>{$usuario['id']}</td>
+                            <td>{$usuario['username']}</td>
+                            <td>{$usuario['email']}</td>
+                            <td>{$usuario['password']}</td>
+                            <td>{$usuario['rol']}</td>
+                          </tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
     <!-- Tabla de Ventas -->
     <div class="mb-5">
         <h4>Ventas</h4>
@@ -86,8 +114,8 @@ $db = getDB();
                     while ($venta = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         echo "<tr>
                                 <td>{$venta['id']}</td>
-                                <td>{$venta['id_usuario']}</td>
-                                <td>{$venta['id_plato']}</td>
+                                <td>{$venta['usuario_id']}</td>
+                                <td>{$venta['plato_id']}</td>
                                 <td>{$venta['fecha']}</td>
                                 <td>{$venta['cantidad']}</td>
                                 <td>{$venta['total']}</td>
@@ -98,6 +126,10 @@ $db = getDB();
             </table>
         </div>
     </div>
+
+
+
+
 </div>
 
 <!-- Bootstrap JS -->
