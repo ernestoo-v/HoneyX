@@ -125,6 +125,6 @@ Docker Compose → Instalar Docker Compose
 
 ## 📬 Contacto
 
-Autor: GutiFer4
+Autores: GutiFer4 | ernestoo-v
 
 Repositorio original: HoneyX
