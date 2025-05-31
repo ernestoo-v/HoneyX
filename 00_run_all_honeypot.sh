@@ -18,6 +18,13 @@ SCRIPTS=(
 )
 
 echo "==> Iniciando ejecución de todos los scripts..."
+read -p "Introduce la IP del servidor Loki: " LOKI_IP
+if [[ ! "$LOKI_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "IP no válida"
+  exit 1
+fi
+export LOKI_IP
+
 
 for script in "${SCRIPTS[@]}"; do
   SCRIPT_PATH="$SCRIPTS_DIR/$script"
