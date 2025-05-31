@@ -5,7 +5,7 @@ include 'db.php'; ?>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Restaurante Moderno</title>
+    <title>La Paradita</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,15 +15,17 @@ include 'db.php'; ?>
 <body>
     <?php include 'navbar.php'; ?>
 
-    <!-- Imagen de fondo con texto superpuesto -->
-    <div class="bg-image text-white text-center d-flex align-items-center" style="background-image: url('img/restaurant.jpg'); height: 100vh; background-size: cover; background-position: center;">
-        <div class="container">
-            <h1 class="display-4 fw-bold">Bienvenido a Restaurante Moderno</h1>
+    <!-- Imagen de fondo con texto alineado a la derecha -->
+<div class="bg-image text-white d-flex align-items-center" style="background-image: url('img/restaurant.png'); height: 100vh; background-size: cover; background-position: center;">
+    <div class="container d-flex justify-content-end">
+        <div class="text-end">
+            <h1 class="display-4 fw-bold">Bienvenido a La Paradita</h1>
             <p class="lead">Disfruta de la mejor cocina española en un ambiente moderno y elegante.</p>
-            <a href="reserva.php" class="btn btn-primary btn-lg m-2">Reservar Mesa</a>
+            <a href="reserva.php" class="btn btn-warning btn-lg m-2 text-dark fw-bold">Reservar Mesa</a>
             <a href="menu.php" class="btn btn-outline-light btn-lg m-2">Ver Menú</a>
         </div>
     </div>
+</div>
 
     <!-- Sección de destacados -->
     <div class="container my-5">
@@ -80,7 +82,7 @@ include 'db.php'; ?>
     <!-- Información de contacto -->
     <div class="bg-dark text-white py-4">
         <div class="container text-center">
-            <p><strong>Dirección:</strong> Calle Falsa 123, Madrid, España</p>
+            <p><strong>Dirección:</strong> Avenida de los Cármenes, 23 - Madrid</p>
             <p><strong>Teléfono:</strong> +34 912 345 678</p>
             <p><strong>Horario:</strong> Lunes a Domingo: 12:00 - 23:00</p>
         </div>
