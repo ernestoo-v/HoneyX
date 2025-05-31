@@ -1,0 +1,76 @@
+
+/* css/style.css */
+
+body {
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #444;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+form input[type="text"],
+form input[type="password"], form input[type="email"]  {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #ffc107;
+    color: #343a40;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #ffc107;
+    border: none;
+    color: #343a40;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #e0a800;
+    color: #ffffff;}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid #ffc107;
+    background-color: #fff;
+    color: #343a40;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+.btn:hover {
+    background-color: #e0a800;
+    color: #fff;
+}
+

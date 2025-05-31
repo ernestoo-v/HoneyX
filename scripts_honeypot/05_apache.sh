@@ -22,16 +22,8 @@ else
 fi
 
 # 5) Luego, todos los demás create_*.sh (salta el de Apache)
-for script in "$SCRIPTS_DIR"/create_*.sh; do
-  [[ "$script" == "$APACHE_SETUP" ]] && continue
-  if [[ -x "$script" ]]; then
-    echo "----> Ejecutando $(basename "$script")"
-    bash "$script"
-  else
-    echo "----> Haciendo ejecutable y lanzando $(basename "$script")"
-    chmod +x "$script"
-    bash "$script"
-  fi
-done
+
+sudo cp -r web/* honeypot/web
+
 
 echo "==> ¡Todas las páginas web se han generado correctamente!"

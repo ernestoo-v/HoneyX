@@ -14,6 +14,3 @@ RUN apt-get update \
  && docker-php-ext-install pdo pdo_mysql \
  && rm -rf /var/lib/apt/lists/*
 EOF
-
-echo "==> Creando estructura de carpetas web..."
-mkdir -p "$WEB_DIR"/{assets/css,assets/js}
