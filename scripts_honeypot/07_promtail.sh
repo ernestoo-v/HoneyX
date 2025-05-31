@@ -12,7 +12,7 @@ positions:
   filename: /var/lib/promtail/positions.yaml
 
 clients:
-  - url: http://10.0.2.15:3100/loki/api/v1/push
+  - url: http://$LOKI_IP:3100/loki/api/v1/push
 
 scrape_configs:
 #─────────── Apache access / error ───────────

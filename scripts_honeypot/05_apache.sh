@@ -5,8 +5,6 @@ set -euo pipefail
 # 1) Calculo de la ruta absoluta al propio directorio de este script:
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# 2) Carpeta donde están los create_*.sh
-SCRIPTS_DIR="$BASE_DIR/web"
 # 3) Identificar explícitamente el setup de Apache
 APACHE_SETUP="$SCRIPTS_DIR/create_apache.sh"
 
@@ -21,9 +19,7 @@ else
   exit 1
 fi
 
-# 5) Luego, todos los demás create_*.sh (salta el de Apache)
-
+# 5) Copiamos el directorio de nuestra web al directorio de honeypot
 sudo cp -r web/* honeypot/web
-
 
 echo "==> ¡Todas las páginas web se han generado correctamente!"
