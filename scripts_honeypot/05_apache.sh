@@ -2,19 +2,19 @@
 # scripts/05_apache.sh — Orquesta la generación de la web
 set -euo pipefail
 
-# 2) Identificar explícitamente el setup de Apache
+# 1) Nombre del script que configura Apache
 APACHE_SETUP="051_create_apache.sh"
 
-# 3) Primero: creamos Dockerfile y estructura Apache/PHP
+# 2) Verifica si existe el script
 if [[ -f "$APACHE_SETUP" ]]; then
   echo "----> Ejecutando $(basename "$APACHE_SETUP")"
-  bash "$051_create_apache.sh"
+  bash "$APACHE_SETUP"
 else
   echo "¡¡ Error: no existe $APACHE_SETUP !!"
   exit 1
 fi
 
-# 4) Copiamos el directorio de nuestra web al directorio de honeypot
+# 3) Copiar el contenido del directorio web al destino en honeypot
 sudo cp -r web/* honeypot/web
 
 echo "==> ¡Todas las páginas web se han generado correctamente!"
