@@ -45,11 +45,11 @@ scrape_configs:
   - job_name: mysql-slow
     static_configs:
       - labels: { job: mysql, type: slow, __path__: /var/log/mysql/slow.log }
-        pipeline_stages:
+    pipeline_stages:
+      - multiline: { firstline: '^# Time:' }
       - regex:
-          expression: '^\d{4}-\d{2}-\d{2}T.*\s+\d+\s+Connect\s+\S+@(?P<remote_ip>\d+\.\d+\.\d+\.\d+)'
-      - labels:
-          remote_ip: ""
+          expression: '^# Time: (?P<ts>\d{6}\s+\d{1,2}:\d{2}:\d{2}).*\n# Query_time: (?P<qtime>[0-9\.]+)'
+      - labels: { qtime }
 
   - job_name: mysql-error
     static_configs:
