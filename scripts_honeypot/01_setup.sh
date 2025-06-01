@@ -5,6 +5,6 @@ set -e
 BASE_DIR="honeypot"
 
 echo "==> Creando directorios en $BASE_DIR..."
-mkdir -p $BASE_DIR/{cowrie,mi_ftp,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,volumenes/cowrie_logs,config}
+mkdir -p $BASE_DIR/{mi_ftp,web,volumenes/apache_logs,volumenes/mysql_log,volumenes/ftp_logs,volumenes/config}
 
 echo "Estructura inicial preparada."

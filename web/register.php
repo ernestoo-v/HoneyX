@@ -9,8 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     // Inserción vulnerable a inyección SQL (intencionado para el honeypot)
-    $query = "INSERT INTO usuarios (username, email, password, rol) 
-              VALUES ('$username', '$email', '$password', 'cliente')";
+    $query = "INSERT INTO usuarios (username, email, password, rol) VALUES ('$username', '$email', '$password', 'cliente')";
 
     try {
         $db->exec($query);

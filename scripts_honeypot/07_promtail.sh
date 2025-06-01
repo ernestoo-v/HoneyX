@@ -42,15 +42,6 @@ scrape_configs:
       - labels: { txid, severity, client_ip }
 
 #─────────── MySQL slow / error / general ───────────
-  - job_name: mysql-slow
-    static_configs:
-      - labels: { job: mysql, type: slow, __path__: /var/log/mysql/slow.log }
-        pipeline_stages:
-      - regex:
-          expression: '^\d{4}-\d{2}-\d{2}T.*\s+\d+\s+Connect\s+\S+@(?P<remote_ip>\d+\.\d+\.\d+\.\d+)'
-      - labels:
-          remote_ip: ""
-
   - job_name: mysql-error
     static_configs:
       - labels: { job: mysql, type: error, __path__: /var/log/mysql/error.log }
@@ -58,7 +49,10 @@ scrape_configs:
   - job_name: mysql-general
     static_configs:
       - labels: { job: mysql, type: general, __path__: /var/log/mysql/general.log }
-
+    pipeline_stages:
+      - regex:
+          expression: '(?P<remote_ip>(?:[0-9]{1,3}\.){3}[0-9]{1,3})'
+      - labels: { remote_ip }
 
 #─────────── ProFTPD ───────────
   - job_name: ftp
