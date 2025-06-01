@@ -41,7 +41,7 @@ scrape_configs:
             uri: transaction.request.uri
       - labels: { txid, severity, client_ip }
 
-#─────────── MySQL error / general ───────────
+#─────────── MySQL slow / error / general ───────────
   - job_name: mysql-error
     static_configs:
       - labels: { job: mysql, type: error, __path__: /var/log/mysql/error.log }
@@ -49,15 +49,6 @@ scrape_configs:
   - job_name: mysql-general
     static_configs:
       - labels: { job: mysql, type: general, __path__: /var/log/mysql/general.log }
-
-    pipeline_stages:
-      - regex:
-          expression: '(?P<remote_ip>(?:[0-9]{1,3}\.){3}[0-9]{1,3})'
-
-      - labels: { remote_ip }
-
-
-
 
 #─────────── ProFTPD ───────────
   - job_name: ftp
