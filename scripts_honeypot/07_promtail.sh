@@ -42,15 +42,6 @@ scrape_configs:
       - labels: { txid, severity, client_ip }
 
 #─────────── MySQL slow / error / general ───────────
-  - job_name: mysql-slow
-    static_configs:
-      - labels: { job: mysql, type: slow, __path__: /var/log/mysql/slow.log }
-    pipeline_stages:
-      - multiline: { firstline: '^# Time:' }
-      - regex:
-          expression: '^# Time: (?P<ts>\d{6}\s+\d{1,2}:\d{2}:\d{2}).*\n# Query_time: (?P<qtime>[0-9\.]+)'
-      - labels: { qtime }
-
   - job_name: mysql-error
     static_configs:
       - labels: { job: mysql, type: error, __path__: /var/log/mysql/error.log }
