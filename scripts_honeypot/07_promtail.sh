@@ -49,6 +49,10 @@ scrape_configs:
   - job_name: mysql-general
     static_configs:
       - labels: { job: mysql, type: general, __path__: /var/log/mysql/general.log }
+    pipeline_stages:
+      - regex:
+          expression: '(?P<remote_ip>(?:[0-9]{1,3}\.){3}[0-9]{1,3})'
+      - labels: { remote_ip }
 
 #─────────── ProFTPD ───────────
   - job_name: ftp
