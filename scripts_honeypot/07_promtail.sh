@@ -41,34 +41,21 @@ scrape_configs:
             uri: transaction.request.uri
       - labels: { txid, severity, client_ip }
 
-#─────────── MySQL slow / error / general ───────────
+#─────────── MySQL error / general ───────────
   - job_name: mysql-error
     static_configs:
       - labels: { job: mysql, type: error, __path__: /var/log/mysql/error.log }
 
   - job_name: mysql-general
     static_configs:
-      - labels:
-          job: mysql
-          type: general
-          __path__: /var/log/mysql/general.log
+      - labels: { job: mysql, type: general, __path__: /var/log/mysql/general.log }
 
     pipeline_stages:
       - regex:
-          expression: >-
-            ^(?P<ts>\d{6}\s+\d{1,2}:\d{2}:\d{2})    
-            \s+\d+\s+                               
-            (?P<command>\w+)\s+                     
-            (?P<user>\S+?)@(?P<remote_ip>[0-9\.]+) 
-            (?:\s+on\s+(?P<db>\S+))?                
-      - timestamp:
-          source: ts
-          format: '060102 15:04:05'      
-      - labels:
-          remote_ip: ''
-          command: ''
-          user: ''
-          db: ''
+          expression: '(?P<remote_ip>(?:[0-9]{1,3}\.){3}[0-9]{1,3})'
+
+      - labels: { remote_ip }
+
 
 
 
