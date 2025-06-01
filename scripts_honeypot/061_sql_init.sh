@@ -24,9 +24,7 @@ cat > "$INIT_SQL" << 'EOF'
 -- DROP TABLE IF EXISTS usuarios;
 -- DROP TABLE IF EXISTS platos;
 
-───────────────────────────
 -- 1. Empleados
-───────────────────────────
 CREATE TABLE IF NOT EXISTS empleados (
   id               INT AUTO_INCREMENT PRIMARY KEY,
   nombre           VARCHAR(50),
@@ -58,9 +56,7 @@ VALUES
   ('Eva','Serrano','camarera',     'C/ Cielo 10, Alicante',     '692345678','eva.serrano@restaurante.com',   'ES1100223344556677889900','1998-12-01'),
   ('Rubén','Vega','camarero',      'Av. Europa 16, Valladolid', '693456789','ruben.vega@restaurante.com',    'ES3344556677889900112233','1993-04-30');
 
-───────────────────────────
 -- 2. Usuarios
-───────────────────────────
 CREATE TABLE IF NOT EXISTS usuarios (
   id       INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50),
@@ -84,9 +80,7 @@ INSERT INTO usuarios (username, email, password, rol) VALUES
   ('user9','user9@email.com','user9pass','cliente'),
   ('user10','user10@email.com','user10pass','cliente');
 
-───────────────────────────
 -- 3. Platos
-───────────────────────────
 CREATE TABLE IF NOT EXISTS platos (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   nombre      VARCHAR(100),
@@ -117,9 +111,7 @@ INSERT INTO platos (nombre, descripcion, precio, imagen_url) VALUES
   ('Merluza a la Vasca','Merluza con salsa verde',13.00,'/img/merluza.jpg'),
   ('Churros con Chocolate','Masa frita con chocolate caliente',4.00,'/img/churros.jpg');
 
-───────────────────────────
 -- 4. Ventas
-───────────────────────────
 CREATE TABLE IF NOT EXISTS ventas (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id  INT,
@@ -144,9 +136,7 @@ INSERT INTO ventas (usuario_id, plato_id, fecha, cantidad, total, metodo_pago) V
   (9, 14,  '2024-05-09 19:00:00', 1,  7.50,'tarjeta'),
   (10,19,  '2024-05-10 21:30:00', 4, 52.00,'efectivo');
 
-───────────────────────────
 -- 5. Valoraciones
-───────────────────────────
 CREATE TABLE IF NOT EXISTS valoraciones (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id  INT,
@@ -170,9 +160,7 @@ INSERT INTO valoraciones (usuario_id, plato_id, puntuacion, comentario, fecha) V
   (9, 20, 5,'Churros perfectos para terminar la comida','2024-05-09'),
   (10, 8, 3,'Huevos rotos bien, pero faltaba jamón','2024-05-10');
 
-───────────────────────────
 -- 6. Reservas
-───────────────────────────
 CREATE TABLE IF NOT EXISTS reservas (
   id        INT AUTO_INCREMENT PRIMARY KEY,
   nombre    VARCHAR(100),
