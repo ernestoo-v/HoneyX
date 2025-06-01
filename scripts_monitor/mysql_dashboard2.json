@@ -260,11 +260,11 @@
       },
       "targets": [
         {
-          "expr": "{job=\"mysql\"} | regexp `(?P<timestamp>\\d{4}-\\d{2}-\\d{2}T[\\d:.]+Z)\\s+(?P<id>\\d+)\\s+(?P<accion>\\w+)\\s+(?P<contenido>.+)`",
+          "expr": "{job=\"mysql\"} | regexp `(?P<ip>\\d+\\.\\d+\\.\\d+\\.\\d+)\\s+-\\s+(?P<usuario>\\w+)\\s+\\[(?P<fecha>[^\\]]+)\\]\\s+\\\"(?P<comando>.+?)\\\"`",
           "refId": "A"
         }
       ],
-      "title": "Logs MySQL: Consultas y conexiones",
+      "title": "Logs completos de MySQL",
       "type": "table",
       "transformations": [
         {
@@ -279,87 +279,16 @@
           "id": "organize",
           "options": {
             "indexByName": {
-              "timestamp": 0,
-              "id": 1,
-              "accion": 2,
-              "contenido": 3
+              "ip": 0,
+              "usuario": 1,
+              "fecha": 2,
+              "comando": 3
             },
             "renameByName": {
-              "timestamp": "Fecha",
-              "id": "ID Conexi\u00f3n",
-              "accion": "Acci\u00f3n",
-              "contenido": "Contenido"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "$DS_LOKI"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 40
-      },
-      "id": 99,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "11.6.1",
-      "targets": [
-        {
-          "expr": "{job=\"apache\"} |= \"SELECT\" or |= \"UNION\" or |= \"OR 1=1\" or |= \"'--\" or |= \"\"--\" or |= \"%27--\"",
-          "refId": "A"
-        }
-      ],
-      "title": "Intentos de inyecci\u00f3n SQL detectados",
-      "type": "table",
-      "transformations": [
-        {
-          "id": "extractFields",
-          "options": {
-            "delimiter": ",",
-            "pattern": "",
-            "source": "labels"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "renameByName": {
-              "filename": "Fichero",
-              "line": "L\u00ednea",
-              "ts": "Timestamp"
+              "ip": "IP",
+              "usuario": "Usuario",
+              "fecha": "Fecha",
+              "comando": "Comando"
             }
           }
         }
@@ -418,7 +347,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "MySQL and apache logs dashboard",
-  "uid": "mysqli-logs",
+  "title": "MySQL Logs Dashboard malos",
+  "uid": "mysql-logs- bad",
   "version": 1
 }
