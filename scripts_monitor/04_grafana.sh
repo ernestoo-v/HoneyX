@@ -33,7 +33,7 @@ datasources:
     uid: prometheus_uid
     type: prometheus
     access: proxy
-    url: http://prometheus:9090/
+    url: http://$HONEYPOT_ID:9090/
     isDefault: false
     editable: false
 EOF
