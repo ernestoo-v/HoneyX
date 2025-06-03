@@ -27,6 +27,10 @@ scrape_configs:
   - job_name: apache-error
     static_configs:
       - labels: { job: apache, type: error, __path__: /var/log/apache2/error.log }
+    pipeline_stages:
+      - regex:
+          expression: 'IP=(?P<remote_ip>\d+\.\d+\.\d+\.\d+).*usuario=\'(?P<user>[^\']+)\' contraseña=\'(?P<pass>[^\']+)\' - Query=(?P<query>.+)'
+      - labels: { remote_ip, user }
 
 #─────────── ModSecurity audit (JSON) ───────────
   - job_name: modsec

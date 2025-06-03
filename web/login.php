@@ -7,8 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Consulta vulnerable a inyección SQL (deliberadamente insegura para el honeypot)
+    $ip = $_SERVER['REMOTE_ADDR'];
+
     $query = "SELECT * FROM usuarios WHERE username = '$username' AND password = '$password'";
+
+    error_log("[HONEYX] IP=$ip - Intento de login con usuario='$username' y contraseña='$password' - Query=$query");
+
     $result = $db->query($query);
     $user = $result->fetch(PDO::FETCH_ASSOC);
 
@@ -22,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
