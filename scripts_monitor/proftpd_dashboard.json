@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 4,
   "links": [],
   "panels": [
     {
@@ -60,17 +60,48 @@
       "id": 1,
       "options": {
         "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": []
       },
       "pluginVersion": "11.6.1",
       "targets": [
         {
+          "direction": "backward",
+          "editorMode": "code",
           "expr": "{job=\"ftp\"} |= \"530\"",
+          "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Inicios de sesi\u00f3n fallidos",
+      "title": "Inicios de sesión fallidos",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "id": true,
+              "tsNs": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Line": 2,
+              "Time": 0,
+              "id": 4,
+              "labels": 1,
+              "tsNs": 3
+            },
+            "renameByName": {}
+          }
+        }
+      ],
       "type": "table"
     },
     {
@@ -81,17 +112,39 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
             "showPoints": "auto",
             "spanNulls": false,
             "stacking": {
+              "group": "A",
               "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -117,12 +170,15 @@
       "interval": "1s",
       "options": {
         "legend": {
+          "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "11.6.1",
@@ -146,6 +202,7 @@
             },
             "inspect": false
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -170,6 +227,14 @@
       "id": 3,
       "options": {
         "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": []
       },
@@ -180,7 +245,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top IPs por n\u00famero de consultas",
+      "title": "Top IPs por número de consultas",
       "type": "table"
     },
     {
@@ -194,6 +259,7 @@
             },
             "inspect": false
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -218,17 +284,28 @@
       "id": 4,
       "options": {
         "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": []
       },
+      "pluginVersion": "11.6.1",
       "targets": [
         {
+          "direction": "backward",
+          "editorMode": "code",
           "expr": "{job=\"ftp\"} | regexp `(?P<ip>\\d+\\.\\d+\\.\\d+\\.\\d+)\\s+UNKNOWN\\s+(?P<user>\\S+)\\s+\\[(?P<fecha>[^\\]]+)\\]\\s+\\\"(?P<comando>.*?)\\\"`",
+          "queryType": "range",
           "refId": "A"
         }
       ],
       "title": "Logs completos de FTP",
-      "type": "table",
       "transformations": [
         {
           "id": "extractFields",
@@ -241,21 +318,38 @@
         {
           "id": "organize",
           "options": {
+            "excludeByName": {
+              "Line": true,
+              "fecha": true,
+              "id": true,
+              "job": true,
+              "labels": true,
+              "tsNs": true
+            },
+            "includeByName": {},
             "indexByName": {
-              "ip": 0,
-              "user": 1,
-              "fecha": 2,
-              "comando": 3
+              "Line": 7,
+              "Time": 0,
+              "comando": 3,
+              "fecha": 5,
+              "filename": 4,
+              "id": 9,
+              "ip": 1,
+              "job": 10,
+              "labels": 6,
+              "tsNs": 8,
+              "user": 2
             },
             "renameByName": {
-              "ip": "IP",
-              "user": "Usuario",
+              "comando": "Comand",
               "fecha": "Fecha",
-              "comando": "Comando"
+              "ip": "IP",
+              "user": "User"
             }
           }
         }
-      ]
+      ],
+      "type": "table"
     }
   ],
   "preload": false,
@@ -312,5 +406,5 @@
   "timezone": "browser",
   "title": "ProFTPD Logs Dashboard",
   "uid": "proftpd-logs",
-  "version": 1
+  "version": 3
 }
