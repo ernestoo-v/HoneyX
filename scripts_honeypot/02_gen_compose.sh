@@ -9,9 +9,9 @@ echo "==> Generando $OUT..."
 cat > $OUT << 'EOF'
 services:
 #─────────────────── FTP ────────────────────
-  mi_ftp:
+  ftp:
     build: ./proftpd
-    container_name: mi_ftp
+    container_name: ftp
     volumes:
       - ./proftpd/proftpd.conf:/etc/proftpd/proftpd.conf:ro
       - ./volumenes/ftp_logs:/var/log/proftpd
@@ -19,9 +19,9 @@ services:
     networks: { dmz: { ipv4_address: 172.18.0.11 } }
 
 #─────────────────── MySQL ──────────────────
-  mi_mysql:
+  mysql:
     image: mysql:5.7
-    container_name: mi_mysql
+    container_name: mysql
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: bbdd
@@ -37,10 +37,10 @@ services:
     networks: { dmz: { ipv4_address: 172.18.0.18 } }
 
 #─────────────────── Apache + ModSecurity ───
-  mi_apache:
+  apache:
     build: ./apache
-    image: mi_apache_custom
-    container_name: mi_apache
+    image: apache_custom
+    container_name: apache
     depends_on: [mi_mysql]
     volumes:
       - ./web/:/var/www/html:ro
@@ -79,9 +79,9 @@ services:
     networks: { dmz: { ipv4_address: 172.18.0.32 } }
 
 #─────────────────── Promtail ───────────────
-  mi_promtail:
+  promtail:
     image: grafana/promtail:2.9.6
-    container_name: mi_promtail
+    container_name: promtail
     restart: unless-stopped
     command: -config.file=/etc/promtail/config.yml
     volumes:
