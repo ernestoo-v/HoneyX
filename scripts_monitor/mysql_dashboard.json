@@ -18,9 +18,262 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 9,
+  "id": 2,
   "links": [],
   "panels": [
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Timestamp"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "username"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Usuario"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "password"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Contraseña"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Timestamp"
+          }
+        ]
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{job=\"apache\", type=\"error\"} |= \"[HONEYX]\" | regexp `\\[HONEYX\\] IP=(?P<ip>[^\\s]+) - Intento de login con usuario='(?P<username>.*?)' y (contrasena|contraseñ)='(?P<password>.*?)'`",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Intentos de Login",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "delimiter": ",",
+            "format": "auto",
+            "pattern": "usuario='(?P<username>.+?)' y (contrasena|contraseñ)='(?P<password>.+?)'",
+            "replace": false,
+            "source": "labels"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Line": true,
+              "filename": true,
+              "id": true,
+              "job": true,
+              "labels": true,
+              "line": true,
+              "tsNs": true,
+              "type": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Line": 5,
+              "Time": 0,
+              "filename": 8,
+              "id": 7,
+              "ip": 1,
+              "job": 9,
+              "labels": 4,
+              "password": 3,
+              "tsNs": 6,
+              "type": 10,
+              "username": 2
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "$DS_LOKI",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 19,
+      "options": {
+        "cellHeight": "sm",
+        "columns": [
+          {
+            "field": "ip",
+            "text": "IP"
+          },
+          {
+            "field": "Errors",
+            "text": "Errors"
+          }
+        ],
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.6.1",
+      "targets": [
+        {
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "topk(10, sum by (ip) (count_over_time({job=\"apache\", type=\"error\"} |= \"[HONEYX]\" | regexp \"\\\\[HONEYX\\\\] IP=(?P<ip>[^\\\\s]+)\" [5m])))",
+          "instant": false,
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 10 IPs logins",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns",
+            "valueLabel": "ip"
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "labelsToFields": false,
+            "mode": "seriesToRows",
+            "reducers": [
+              "max"
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Field": false,
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "__value__": 1,
+              "ip": 0
+            },
+            "renameByName": {
+              "Field": "IP",
+              "Max": "Numer",
+              "__value__": "Errors"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
     {
       "datasource": {
         "type": "loki",
@@ -105,7 +358,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 8
       },
       "id": 15,
       "options": {
@@ -285,7 +538,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 18
       },
       "id": 16,
       "options": {
@@ -440,7 +693,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 20
+        "y": 28
       },
       "id": 3,
       "interval": "1s",
@@ -498,9 +751,9 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 20
+        "y": 28
       },
-      "id": 2,
+      "id": 17,
       "options": {
         "cellHeight": "sm",
         "columns": [
@@ -528,7 +781,7 @@
         {
           "direction": "backward",
           "editorMode": "code",
-          "expr": "topk(10, sum by (remote_ip) (count_over_time({job=\"mysql\"} |= \"Query\" [5m])))",
+          "expr": "{job=\"apache\", type=\"error\"} |= \"[HONEYX]\"",
           "instant": true,
           "queryType": "range",
           "refId": "A"
@@ -568,9 +821,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 38
       },
-      "id": 4,
+      "id": 18,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -586,7 +839,10 @@
       "pluginVersion": "11.6.1",
       "targets": [
         {
+          "direction": "backward",
+          "editorMode": "code",
           "expr": "{job=\"mysql\"} |= \"Access denied\"",
+          "queryType": "range",
           "refId": "A"
         }
       ],
@@ -626,5 +882,5 @@
   "timezone": "browser",
   "title": "MySQL Logs Dashboard",
   "uid": "mysql-logs",
-  "version": 1
+  "version": 32
 }
