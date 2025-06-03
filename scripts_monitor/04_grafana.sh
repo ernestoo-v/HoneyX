@@ -29,14 +29,13 @@ echo "Generando datasource Prometheus…"
 cat > "$DS_DIR/prometheus.yml" <<'EOF'
 apiVersion: 1
 datasources:
-  
-name: Prometheus
-  uid: prometheus_uid
-  type: prometheus
-  access: proxy
-  url: http://prometheus:9090/
-  isDefault: false
-  editable: false,
+  - name: Prometheus
+    uid: prometheus_uid
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090/
+    isDefault: false
+    editable: false
 EOF
 
 echo "Generando provider de dashboards…"
