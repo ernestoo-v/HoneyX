@@ -41,7 +41,7 @@ services:
     build: ./apache
     image: apache_custom
     container_name: apache
-    depends_on: [mi_mysql]
+    depends_on: [mysql]
     volumes:
       - ./web/:/var/www/html:ro
       - ./volumenes/apache_logs:/var/log/apache2            # access & error
