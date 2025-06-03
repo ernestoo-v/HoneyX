@@ -25,6 +25,19 @@ datasources:
       maxLines: 1000
 EOF
 
+echo "Generando datasource Prometheus…"
+cat > "$DS_DIR/prometheus.yml" << EOF
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    uid: prometheus_uid
+    type: prometheus
+    access: proxy
+    url: http://$HONEYPOT_ID:9090/
+    isDefault: false
+    editable: false
+EOF
+
 echo "Generando provider de dashboards…"
 # IMPORTANTE: la ruta ES LA DEL CONTENEDOR, no la del host
 cat > "$PR_DIR/honeypot_provider.yml" <<'EOF'
@@ -43,9 +56,11 @@ EOF
 
 sudo cp scripts_monitor/apache_grafana.json $DB_DIR/
 sudo cp scripts_monitor/mysql_dashboard.json $DB_DIR/
+sudo cp scripts_monitor/prometheus_dashboard.json $DB_DIR/
+sudo cp scripts_monitor/proftpd_dashboard.json $DB_DIR/
+
 #sudo cp scripts_monitor/sqli_apache_mysql_dashboard.json $DB_DIR/
 #sudo cp scripts_monitor/fakessh_dashboard.json $DB_DIR/
-#sudo cp scripts_monitor/proftpd_dashboard.json $DB_DIR/
 
 
 echo "Datasource y dashboard listos."

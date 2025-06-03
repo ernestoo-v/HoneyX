@@ -33,7 +33,7 @@ include 'db.php'; ?>
         <div class="row">
             <?php
             $db = getDB();
-            $stmt = $db->query("SELECT * FROM platos ORDER BY RANDOM() LIMIT 3");
+            $stmt = $db->query("SELECT * FROM platos ORDER BY RAND() LIMIT 3")->fetchAll();
             foreach($stmt as $plato) {
                 echo '
                 <div class="col-md-4 mb-4">

@@ -1,5 +1,7 @@
 # 🐝 HoneyX
 
+![Logo](img/HoneyX.png)
+
 **HoneyX** es un sistema honeypot distribuido. Su objetivo es simular servicios vulnerables para atraer posibles atacantes y registrar sus actividades. El sistema está dividido en dos componentes principales:
 
 - **Honeypot**: Simula servicios vulnerables y recopila datos de posibles intrusiones.
@@ -63,29 +65,22 @@
 git clone https://github.com/GutiFer4/HoneyX.git
 cd HoneyX
 ```
-### 🐝 2. Ajustar el archivo de configuración de promtail para apuntar a la ip donde desplegarás la Máquina de Monitorización
 
-```bash
-sudo nano scripts_honeypot/07_promtail.sh
-```
-Dentro de este arhivo cambiaremos la ip de la linea 15:
-
-```bash
-clients:
-  - url: http://< IP DE TU MAQUINA DE MONITORIZACIÓN >:3100/loki/api/v1/push
-```
-
-### 🐝 3. Desplegar la máquina Honeypot
+### 🐝 2. Desplegar la máquina Honeypot
 
 ```bash
 chmod +x 00_run_all_honeypot.sh
 sudo ./00_run_all_honeypot.sh
+```
 
+Una vez ejcutado el propio script se te pedirá que introduzcas la ip de la Máquina de Monitorización
+
+```bash
 cd honeypot
 docker-compose up -d --build
 ```
 
-### 📈 4. Desplegar la máquina de Monitorización
+### 📈 3. Desplegar la máquina de Monitorización
 
 ```bash
 chmod +x 00_run_all_monitor.sh
@@ -114,6 +109,8 @@ Contraseña: admin
 Los servicios simulados generan logs que se almacenan en volúmenes locales dentro de la máquina honeypot.
 
 Promtail los recolecta y envía a Loki, donde se almacenan y están disponibles para consulta.
+
+Estarán automáticamente creados en el apartado de dashboards los dashboards necesarios para la correcta visualización de todos los servicios.
 
 Las métricas del sistema (uso de CPU, memoria, etc.) se recogen con Node Exporter y se visualizan en Grafana mediante Prometheus.
 

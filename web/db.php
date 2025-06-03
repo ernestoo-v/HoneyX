@@ -1,7 +1,7 @@
 <?php
 // db.php — conexión con MySQL
 function getDB() {
-    $host = 'mi_mysql';       // nombre del contenedor en la red Docker
+    $host = 'mysql';       // nombre del contenedor en la red Docker
     $dbname = 'bbdd';         // como definiste en MYSQL_DATABASE
     $user = 'usuario';        // como definiste en MYSQL_USER
     $pass = 'passwd';         // como definiste en MYSQL_PASSWORD
