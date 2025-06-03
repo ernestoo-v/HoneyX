@@ -26,7 +26,7 @@ datasources:
 EOF
 
 echo "Generando datasource Prometheus…"
-cat > "$DS_DIR/prometheus.yml" <<'EOF'
+cat > "$DS_DIR/prometheus.yml" << EOF
 apiVersion: 1
 datasources:
   - name: Prometheus
