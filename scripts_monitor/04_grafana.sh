@@ -25,6 +25,20 @@ datasources:
       maxLines: 1000
 EOF
 
+echo "Generando datasource Prometheus…"
+cat > "$DS_DIR/prometheus.yml" <<'EOF'
+apiVersion: 1
+datasources:
+  
+name: Prometheus
+  uid: prometheus_uid
+  type: prometheus
+  access: proxy
+  url: http://prometheus:9090/
+  isDefault: false
+  editable: false,
+EOF
+
 echo "Generando provider de dashboards…"
 # IMPORTANTE: la ruta ES LA DEL CONTENEDOR, no la del host
 cat > "$PR_DIR/honeypot_provider.yml" <<'EOF'
