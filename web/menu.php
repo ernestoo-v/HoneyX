@@ -17,9 +17,8 @@ include 'db.php'; $db = getDB(); ?>
     <h2 class="mb-4">Menú Semanal</h2>
     <div class="row">
         <?php
-        // Seleccionamos 5 platos aleatorios como ejemplo de menú semanal
         $dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
-        $platos = $db->query("SELECT * FROM platos ORDER BY RANDOM() LIMIT 5")->fetchAll();
+        $platos = $db->query("SELECT * FROM platos ORDER BY RAND() LIMIT 5")->fetchAll();
         for($i=0; $i<5; $i++) {
             $plato = $platos[$i];
             echo '<div class="col-md-4 mb-4">
