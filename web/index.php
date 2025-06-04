@@ -82,6 +82,7 @@ include 'db.php'; ?>
     <!-- Información de contacto -->
     <div class="bg-dark text-white py-4">
         <div class="container text-center">
+            <!-- cGFzc3dvcmQ6IFlXUnRhVzR4TWpNPQ== -->
             <p><strong>Dirección:</strong> Avenida de los Cármenes, 23 - Madrid</p>
             <p><strong>Teléfono:</strong> +34 912 345 678</p>
             <p><strong>Horario:</strong> Lunes a Domingo: 12:00 - 23:00</p>

@@ -1,6 +1,6 @@
 # 🐝 HoneyX
 
-![Logo](img/HoneyX.png)
+<img src="img/HoneyX.png" alt="Logo HoneyX" width="250">
 
 **HoneyX** es un sistema honeypot distribuido. Su objetivo es simular servicios vulnerables para atraer posibles atacantes y registrar sus actividades. El sistema está dividido en dos componentes principales:
 
@@ -46,6 +46,7 @@
 - **ProFTPD** – Servidor FTP.
 - **FakeSSH** – Simulación de servicio SSH para detectar escaneos o intentos de acceso.
 - **MySQL** – Base de datos simulada vulnerable.
+- **Promtail** – Recolector y etiquetador de logs que los envía a Loki.
 - **Prometheus** – Sistema de monitorización.
 - **Node Exporter** – Exportador de métricas del sistema para Prometheus.
 
@@ -53,7 +54,6 @@
 
 - **Grafana** – Panel de visualización de logs y métricas.
 - **Loki** – Sistema de gestión centralizada de logs.
-- **Promtail** – Recolector y etiquetador de logs que los envía a Loki.
 
 ---
 
@@ -73,7 +73,7 @@ chmod +x 00_run_all_honeypot.sh
 sudo ./00_run_all_honeypot.sh
 ```
 
-Una vez ejcutado el propio script se te pedirá que introduzcas la ip de la Máquina de Monitorización
+Una vez ejecutado el propio script se te pedirá que introduzcas la ip de la Máquina de Monitorización para el correcto funcionamiento de Loki.
 
 ```bash
 cd honeypot
@@ -85,11 +85,14 @@ docker-compose up -d --build
 ```bash
 chmod +x 00_run_all_monitor.sh
 sudo ./00_run_all_monitor.sh
+```
 
+Una vez ejecutado el propio script se te pedirá que introduzcas la ip de la Máquina Honeypot para el correcto funcionamiento de Prometheus.
+
+```bash
 cd monitor
 docker-compose up -d --build
 ```
-
 
 ## 🌐 Cómo acceder a Grafana
 
