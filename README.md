@@ -93,7 +93,7 @@ sudo ./00_run_all_monitor.sh
 Una vez ejecutado el propio script se te pedirá que introduzcas la IP de la Máquina Honeypot para el correcto funcionamiento de Prometheus.
 
 ```bash
-cd monitor
+cd honeypot
 docker-compose up -d --build
 ```
 
