@@ -1,6 +1,9 @@
 # 🐝 HoneyX
 
-<img src="img/HoneyX.png" alt="Logo HoneyX" width="250">
+<p align="center">
+  <img src="img/HoneyX.png" alt="Logo HoneyX" width="350">
+</p>
+
 
 **HoneyX** es un sistema honeypot distribuido. Su objetivo es simular servicios vulnerables para atraer posibles atacantes y registrar sus actividades. El sistema está dividido en dos componentes principales:
 
