@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 04_prometheus.sh — Genera el archivo de configuración para Prometheus
+# 03_prometheus.sh — Genera el archivo de configuración para Prometheus
 
 set -e
 DIR="honeypot/config"
