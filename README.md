@@ -126,6 +126,39 @@ Docker → Instalar Docker
 
 Docker Compose → Instalar Docker Compose
 
+---
+
+## 🔐 Reglas de Red
+
+Para que los servicios de monitorización funcionen correctamente y puedas acceder a sus interfaces web, asegúrate de permitir los siguientes puertos en el cortafuegos de tu infraestructura (por ejemplo, en GCP):
+
+| Puerto | Servicio      | Dirección      | Protocolo | Descripción                              |
+|--------|---------------|----------------|-----------|------------------------------------------|
+| 3000   | Grafana       | Entrada        | TCP       | Acceso al panel web de Grafana           |
+| 3100   | Loki          | Entrada        | TCP       | Recepción de logs desde Promtail         |
+| 9090   | Prometheus    | Entrada        | TCP       | Acceso al panel web y API de Prometheus  |
+| 9100   | Node Exporter | Entrada local  | TCP       | Métricas del sistema para Prometheus     |
+
+### 🔧 En Google Cloud Platform (GCP)
+
+Para permitir estas conexiones:
+
+1. Ve a **VPC > Reglas de firewall** en el panel de GCP.
+2. Crea una nueva regla para cada puerto necesario:
+   - **Nombre**: `allow-grafana`, `allow-loki`, `allow-prometheus`, etc.
+   - **Red**: la misma red de tus instancias.
+   - **Prioridad**: 1000 (valor por defecto).
+   - **Dirección del tráfico**: Entrada.
+   - **Acción en coincidencia**: Permitir.
+   - **Objetivos**: Todas las instancias o instancias con etiquetas específicas.
+   - **Rango de IPs de origen**: por ejemplo `0.0.0.0/0` para acceso público, o restringido a tu IP.
+   - **Protocolos y puertos**: marcar `tcp` y escribir el puerto correspondiente (ej. `3000`).
+
+> ⚠️ **Recomendación**: Abre solo los puertos estrictamente necesarios y, si es posible, restringe el acceso por IP o usa túneles SSH para mayor seguridad.
+
+---
+
+
 ## 📬 Contacto
 
 Autores: GutiFer4 | ernestoo-v
