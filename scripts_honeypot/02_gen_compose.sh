@@ -8,17 +8,20 @@ OUT="$BASE_DIR/docker-compose.yml"
 echo "==> Generando $OUT..."
 cat > $OUT << 'EOF'
 services:
-#─────────────────── FTP ────────────────────
-  ftp:
-    build: ./proftpd
-    container_name: ftp
-    volumes:
-      - ./proftpd/proftpd.conf:/etc/proftpd/proftpd.conf:ro
-      - ./volumenes/ftp_logs:/var/log/proftpd
-    ports: ["21:21", "21100-21110:21100-21110"]
-    networks: { dmz: { ipv4_address: 172.18.0.11 } }
 
-#─────────────────── MySQL ──────────────────
+## ──────────────────────────────  Apache ───────────────────────────────────── ##
+  apache:
+    build: ./apache
+    image: apache_custom
+    container_name: apache
+    depends_on: [mysql]
+    volumes:
+      - ./web/:/var/www/html:ro
+      - ./volumenes/apache_logs:/var/log/apache2           
+    ports: ["80:80"]
+    networks: { dmz: { ipv4_address: 172.18.0.12 } }
+
+## ──────────────────────────────  MySQL Database ───────────────────────────── ##
   mysql:
     image: mysql:5.7
     container_name: mysql
@@ -36,20 +39,17 @@ services:
     ports: ["3306:3306"]
     networks: { dmz: { ipv4_address: 172.18.0.18 } }
 
-#─────────────────── Apache + ModSecurity ───
-  apache:
-    build: ./apache
-    image: apache_custom
-    container_name: apache
-    depends_on: [mysql]
+## ──────────────────────────────  FTP (ProFTPD) ────────────────────────────── ##
+  ftp:
+    build: ./proftpd
+    container_name: ftp
     volumes:
-      - ./web/:/var/www/html:ro
-      - ./volumenes/apache_logs:/var/log/apache2            # access & error
-      - ./volumenes/modsec_logs:/var/log/modsecurity        # audit JSON
-    ports: ["80:80"]
-    networks: { dmz: { ipv4_address: 172.18.0.12 } }
+      - ./proftpd/proftpd.conf:/etc/proftpd/proftpd.conf:ro
+      - ./volumenes/ftp_logs:/var/log/proftpd
+    ports: ["21:21", "21100-21110:21100-21110"]
+    networks: { dmz: { ipv4_address: 172.18.0.11 } }
 
-#─────────────────── Fake_ssh ───────────────
+## ──────────────────────────────  Fake SSH ─────────────────────────────────── ##
   fake_ssh:
     image: alpine
     container_name: fake_ssh
@@ -58,7 +58,9 @@ services:
       - ./volumenes/fakessh_logs:/var/log
     networks: { dmz: { ipv4_address: 172.18.0.20 } }
     
-#─────────────────── Prometheus ───────────────
+###############################  Monitoring & Logging ##############################
+
+## ──────────────────────────────  Prometheus ───────────────────────────────── ##
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -69,7 +71,7 @@ services:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks: { dmz: { ipv4_address: 172.18.0.30 } }
 
-#─────────────────── Node_exporter ───────────────
+## ──────────────────────────────  Node Exporter ───────────────────────────── ##
   node_exporter:
     image: prom/node-exporter:latest
     container_name: node_exporter
@@ -78,7 +80,7 @@ services:
       - "9100:9100"
     networks: { dmz: { ipv4_address: 172.18.0.32 } }
 
-#─────────────────── Promtail ───────────────
+## ─────────────────────────────  Promtail ─────────────────────────────────── ##
   promtail:
     image: grafana/promtail:2.9.6
     container_name: promtail
@@ -90,15 +92,21 @@ services:
       - ./volumenes/mysql_log:/var/log/mysql:ro
       - ./volumenes/ftp_logs:/var/log/proftpd:ro
       - ./volumenes/fakessh_logs:/var/log/fakessh:ro
-      # log JSON de ModSecurity (ruta distinta para evitar solaparse)
-      - ./volumenes/modsec_logs:/var/log/modsecurity:ro
       # config & posiciones
       - ./config/promtail-config.yaml:/etc/promtail/config.yml:ro
       - promtail-data:/var/lib/promtail
     networks: { dmz: { ipv4_address: 172.18.0.15 } }
 
+#################################################################################
+#                                   VOLUMES                                     #
+#################################################################################
+
 volumes:
   promtail-data:
+
+#################################################################################
+#                                   NETWORKS                                    #
+#################################################################################
 
 networks:
   dmz:
@@ -107,6 +115,7 @@ networks:
       config:
         - subnet: 172.18.0.0/16
           gateway: 172.18.0.1
+
 EOF
 
 echo "docker-compose.yml generado."

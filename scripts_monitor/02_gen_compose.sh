@@ -8,6 +8,8 @@ OUT="$BASE_DIR/docker-compose.yml"
 echo "==> Generando $OUT..."
 cat > $OUT << 'EOF'
 services:
+
+## ───────────────────────────────  Loki ───────────────────────────────────── ##
   loki:
     image: grafana/loki:2.9.6
     container_name: loki
@@ -18,6 +20,7 @@ services:
     ports: ["3100:3100"]
     networks: { dmz: { ipv4_address: 172.18.0.14 } }
 
+## ──────────────────────────────  Grafana ─────────────────────────────────── ##
   grafana:
     image: grafana/grafana:11.6.1
     container_name: grafana
@@ -31,6 +34,10 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/dashboards:/var/lib/grafana-dashboards   # carpeta para JSON model
     networks: { dmz: { ipv4_address: 172.18.0.13 } }
+
+#################################################################################
+#                                   NETWORKS                                    #
+#################################################################################
 
 networks:
   dmz:

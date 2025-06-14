@@ -8,7 +8,9 @@ BASE_DIR="honeypot"
 # ----- rutas host -----
 DS_DIR="$BASE_DIR/grafana/provisioning/datasources"      # YAML datasource
 PR_DIR="$BASE_DIR/grafana/provisioning/dashboards"       # YAML provider
+LDB_DIR="scripts_monitor/dashboards"                     # JSON local dashboards
 DB_DIR="$BASE_DIR/grafana/dashboards"                    # JSON dashboards
+
 
 echo "Generando datasource Loki…"
 cat > "$DS_DIR/loki.yml" <<'EOF'
@@ -54,13 +56,9 @@ providers:
       foldersFromFilesStructure: true
 EOF
 
-sudo cp scripts_monitor/apache_grafana.json $DB_DIR/
-sudo cp scripts_monitor/mysql_dashboard.json $DB_DIR/
-sudo cp scripts_monitor/prometheus_dashboard.json $DB_DIR/
-sudo cp scripts_monitor/proftpd_dashboard.json $DB_DIR/
-
-#sudo cp scripts_monitor/sqli_apache_mysql_dashboard.json $DB_DIR/
-#sudo cp scripts_monitor/fakessh_dashboard.json $DB_DIR/
-
+sudo cp $LDB_DIR/apache_grafana.json $DB_DIR/
+sudo cp $LDB_DIR/mysql_dashboard.json $DB_DIR/
+sudo cp $LDB_DIR/prometheus_dashboard.json $DB_DIR/
+sudo cp $LDB_DIR/proftpd_dashboard.json $DB_DIR/
 
 echo "Datasource y dashboard listos."

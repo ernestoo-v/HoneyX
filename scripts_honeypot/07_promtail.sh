@@ -32,19 +32,6 @@ scrape_configs:
           expression: 'IP=(?P<remote_ip>\d+\.\d+\.\d+\.\d+).*usuario=\'(?P<user>[^\']+)\' contraseña=\'(?P<pass>[^\']+)\' - Query=(?P<query>.+)'
       - labels: { remote_ip, user }
 
-#─────────── ModSecurity audit (JSON) ───────────
-  - job_name: modsec
-    static_configs:
-      - labels: { job: apache, type: modsec, __path__: /var/log/modsecurity/*audit*.json }
-    pipeline_stages:
-      - json:
-          expressions:
-            txid: transaction.id
-            severity: severity
-            client_ip: transaction.client_ip
-            uri: transaction.request.uri
-      - labels: { txid, severity, client_ip }
-
 #─────────── MySQL slow / error / general ───────────
   - job_name: mysql-error
     static_configs:

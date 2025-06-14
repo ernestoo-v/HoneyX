@@ -22,8 +22,19 @@ include 'db.php'; $db = getDB(); ?>
         $telefono = $_POST['telefono'];
         $fecha = $_POST['fecha'];
         $personas = $_POST['personas'];
+
+        // Extraer fecha y hora del valor "datetime-local"
+        $dt = DateTime::createFromFormat('Y-m-d\TH:i', $fecha);
+        if ($dt !== false) {
+            $fecha_sql = $dt->format('Y-m-d');
+            $hora_sql = $dt->format('H:i:s');
+        } else {
+            $fecha_sql = $fecha;
+            $hora_sql = '';
+        }
+
         // CONSULTA VULNERABLE
-        $sql = "INSERT INTO reservas (nombre, telefono, fecha, personas) VALUES ('$nombre', '$telefono', '$fecha', $personas)";
+        $sql = "INSERT INTO reservas (nombre, telefono, fecha, hora, personas, mensaje) VALUES ('$nombre', '$telefono', '$fecha_sql', '$hora_sql', $personas, '')";
         $db->exec($sql);
         $mensaje = "<div class='alert alert-success'>Reserva registrada correctamente.</div>";
     }
