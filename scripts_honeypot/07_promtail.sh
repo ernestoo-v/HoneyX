@@ -5,14 +5,14 @@ set -e
 CONF="honeypot/config"
 
 echo "==> Promtail config..."
-cat > $CONF/promtail-config.yaml << EOF
+cat > "$CONF/promtail-config.yaml" <<'EOF'
 server:
   http_listen_port: 9080
 positions:
   filename: /var/lib/promtail/positions.yaml
 
 clients:
-  - url: http://$LOKI_IP:3100/loki/api/v1/push
+  - url: http://LOKI_IP_PLACEHOLDER:3100/loki/api/v1/push
 
 scrape_configs:
 #─────────── Apache access / error ───────────
@@ -29,7 +29,7 @@ scrape_configs:
       - labels: { job: apache, type: error, __path__: /var/log/apache2/error.log }
     pipeline_stages:
       - regex:
-          expression: 'IP=(?P<remote_ip>\d+\.\d+\.\d+\.\d+).*usuario=\'(?P<user>[^\']+)\' contraseña=\'(?P<pass>[^\']+)\' - Query=(?P<query>.+)'
+          expression: 'IP=(?P<remote_ip>\d+\.\d+\.\d+\.\d+).*usuario=''(?P<user>[^']+)'' contraseña=''(?P<pass>[^']+)'' - Query=(?P<query>.+)'
       - labels: { remote_ip, user }
 
 #─────────── MySQL slow / error / general ───────────
@@ -56,5 +56,6 @@ scrape_configs:
       - labels: { job: fakessh, __path__: /var/log/fakessh/fakessh.log }
 
 EOF
+sed -i "s/LOKI_IP_PLACEHOLDER/$LOKI_IP/" "$CONF/promtail-config.yaml"
 
 echo "Promtail configurado."
