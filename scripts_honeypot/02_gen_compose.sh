@@ -93,7 +93,7 @@ services:
       - ./volumenes/ftp_logs:/var/log/proftpd:ro
       - ./volumenes/fakessh_logs:/var/log/fakessh:ro
       # config & posiciones
-      - ./honeypot/config/promtail-config.yaml:/etc/promtail/promtail-custom.yaml:ro
+      - ./config/promtail-config.yaml:/etc/promtail/promtail-custom.yaml:ro
       - promtail-data:/var/lib/promtail
     networks: { dmz: { ipv4_address: 172.18.0.15 } }
 
