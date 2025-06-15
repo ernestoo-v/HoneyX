@@ -29,7 +29,7 @@ scrape_configs:
       - labels: { job: apache, type: error, __path__: /var/log/apache2/error.log }
     pipeline_stages:
       - regex:
-          expression: 'IP=(?P<remote_ip>\d+\.\d+\.\d+\.\d+).*usuario=''(?P<user>[^'']+)'' y contraseña=''(?P<pass>[^'']+)'' - Query=(?P<query>.+)'
+          expression: 'IP=(?P<remote_ip>\d+\.\d+\.\d+\.\d+).*usuario=''(?P<user>[^'']+)'' y contrasena=''(?P<pass>[^'']+)'' - Query=(?P<query>.+)'
       - labels: { remote_ip, user }
 
 #─────────── MySQL slow / error / general ───────────#
