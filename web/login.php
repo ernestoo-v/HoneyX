@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $query = "SELECT * FROM usuarios WHERE username = '$username' AND password = '$password'";
 
-    error_log("[HONEYX] IP=$ip - Intento de login con usuario='$username' y contraseña='$password' - Query=$query");
+    error_log("[HONEYX] IP=$ip - Intento de login con usuario='$username' y contrasena='$password' - Query=$query");
 
     $result = $db->query($query);
     $user = $result->fetch(PDO::FETCH_ASSOC);

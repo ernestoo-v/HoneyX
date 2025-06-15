@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 13,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -191,7 +191,12 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Time"
+          }
+        ]
       },
       "pluginVersion": "11.6.1",
       "targets": [
@@ -305,23 +310,46 @@
           ],
           "show": false
         },
+        "frameIndex": 20,
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Connections"
+          }
+        ]
       },
       "pluginVersion": "11.6.1",
       "targets": [
         {
-          "expr": "topk(10, sum by (remote_ip) (count_over_time({job=\"apache\",type=\"access\"}[5m])))",
+          "direction": "backward",
+          "editorMode": "builder",
+          "expr": "topk(25, sum by(remote_ip) (count_over_time({job=\"apache\", type=\"access\"} [1w])))",
           "instant": true,
-          "refId": "A"
+          "legendFormat": "{{remote_ip}}",
+          "queryType": "instant",
+          "refId": "A",
+          "step": "1s"
         }
       ],
-      "title": "Top 10 IPs by Connections",
+      "title": "Top 25 IPs by Connections",
       "transformations": [
         {
-          "id": "labelsToFields",
+          "id": "seriesToRows",
+          "options": {}
+        },
+        {
+          "id": "organize",
           "options": {
-            "mode": "values"
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value #A": "Connections",
+              "remote_ip": "IP"
+            }
           }
         }
       ],
@@ -494,7 +522,7 @@
     }
   ],
   "preload": false,
-  "refresh": "5s",
+  "refresh": "5m",
   "schemaVersion": 41,
   "tags": [
     "honeypot",
@@ -518,12 +546,12 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Apache Logs Dashboard",
   "uid": "apache-logs",
-  "version": 1
+  "version": 6
 }
