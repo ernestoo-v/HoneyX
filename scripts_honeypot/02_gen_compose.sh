@@ -85,7 +85,7 @@ services:
     image: grafana/promtail:2.9.6
     container_name: promtail
     restart: unless-stopped
-    command: -config.file=/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/promtail-custom.yaml
     volumes:
       # logs texto plano
       - ./volumenes/apache_logs:/var/log/apache2:ro
@@ -93,7 +93,7 @@ services:
       - ./volumenes/ftp_logs:/var/log/proftpd:ro
       - ./volumenes/fakessh_logs:/var/log/fakessh:ro
       # config & posiciones
-      - ./config/promtail-config.yaml:/etc/promtail/config.yml:ro
+      - ./honeypot/config/promtail-config.yaml:/etc/promtail/promtail-custom.yaml:ro
       - promtail-data:/var/lib/promtail
     networks: { dmz: { ipv4_address: 172.18.0.15 } }
 
