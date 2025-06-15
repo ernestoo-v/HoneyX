@@ -6,7 +6,7 @@ CONF="honeypot/config"
 
 echo "==> Promtail config..."
 cat > "$CONF/promtail-config.yaml" <<'EOF'
-erver:
+server:
   http_listen_port: 9080
 positions:
   filename: /var/lib/promtail/positions.yaml
